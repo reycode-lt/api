@@ -4,42 +4,7 @@ import { findAmPreset } from '../lib/amfinder.js';
 import tempmail from '../lib/tempmail.js';
 import { createFreeFireGuest } from '../lib/createguestff.js';
 import { mediaDownloader } from '../lib/aiodownload.js';
-import { createFakeTelegramProfile } from '../lib/faketele.js';
-import Busboy from 'busboy';
-
-export const config = {
-    api: {
-        bodyParser: false,
-    },
-};
-
-const parseMultipart = (req) => {
-    return new Promise((resolve, reject) => {
-        const busboy = Busboy({ headers: req.headers });
-        const fields = {};
-        let fileBuffer = null;
-
-        busboy.on('field', (name, val) => {
-            fields[name] = val;
-        });
-
-        busboy.on('file', (name, file, info) => {
-            const chunks = [];
-            file.on('data', (chunk) => chunks.push(chunk));
-            file.on('end', () => {
-                fileBuffer = Buffer.concat(chunks);
-            });
-        });
-
-        busboy.on('finish', () => {
-            resolve({ fields, fileBuffer });
-        });
-
-        busboy.on('error', (err) => reject(err));
-
-        req.pipe(busboy);
-    });
-};
+import { sendMagicLink, verifyAndActivate } from '../lib/aligmotion.js';
 
 export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -52,43 +17,42 @@ export default async function handler(req, res) {
 
     const path = req.url || '';
     const query = req.query || {};
+    const body = req.body || {};
+    const params = { ...query, ...body };
+    const urlParam = params.url || params.link;
 
     try {
-        // Route: /canvas/faketele (Fake Telegram Profile Generator)
-        if (path.includes('/canvas/faketele')) {
-            let name, phone, bio, username, avatarInput;
+        // Route: /tools/amgen (Alight Motion Generator API)
+        if (path.includes('/tools/amgen')) {
+            const action = String(params.action || '').toLowerCase();
+            const email = params.email;
+            const targetLink = params.link || params.url;
 
-            if (req.method === 'POST') {
-                const { fields, fileBuffer } = await parseMultipart(req);
-                name = fields.name;
-                phone = fields.phone;
-                bio = fields.bio;
-                username = fields.username;
-                avatarInput = fileBuffer;
-            } else {
-                name = query.name || query.nama;
-                phone = query.phone || query.ponsel;
-                bio = query.bio;
-                username = query.username;
-                avatarInput = query.avatar || query.img || query.url;
+            if (action === 'sendlink') {
+                if (!email) {
+                    return res.status(400).json({ status: false, message: "Parameter 'email' wajib diisi." });
+                }
+                const result = await sendMagicLink(email);
+                return res.status(200).json({ status: true, creator: 'ReyCode', result });
             }
 
-            if (!name || !phone || !bio || !username || !avatarInput) {
-                return res.status(400).json({
-                    status: false,
-                    message: "Parameter lengkap wajib diisi: name, phone, bio, username, dan image/avatar."
-                });
+            if (action === 'veriflink') {
+                if (!email || !targetLink) {
+                    return res.status(400).json({ status: false, message: "Parameter 'email' dan 'link' wajib diisi." });
+                }
+                const result = await verifyAndActivate(email, targetLink);
+                return res.status(200).json({ status: true, creator: 'ReyCode', result });
             }
 
-            const imageBuffer = await createFakeTelegramProfile({ name, phone, bio, username, avatarInput });
-            
-            res.setHeader('Content-Type', 'image/png');
-            return res.status(200).send(imageBuffer);
+            return res.status(200).json({
+                status: true,
+                message: "Monika Labs Alight Motion API is active!",
+                endpoints: {
+                    sendlink: "/tools/amgen?action=sendlink&email=TARGET_EMAIL",
+                    veriflink: "/tools/amgen?action=veriflink&email=TARGET_EMAIL&link=MAGIC_LINK"
+                }
+            });
         }
-
-        const body = req.body || {};
-        const params = { ...query, ...body };
-        const urlParam = params.url || params.link;
 
         // Route: /download/aio (All-in-One Media Downloader)
         if (path.includes('/download/aio')) {
@@ -181,7 +145,7 @@ export default async function handler(req, res) {
             status: true,
             message: "Monika Labs API is active!",
             endpoints: {
-                faketele: "/canvas/faketele (POST multipart/form-data)",
+                amgen: "/tools/amgen?action=sendlink&email=... / veriflink&email=...&link=...",
                 aio: "/download/aio?url=<target_url>",
                 tiktok: "/download/tiktok?url=<tiktok_url>",
                 mediafire: "/download/mediafire?url=<mediafire_url>",
