@@ -24,7 +24,7 @@ export default async function handler(req, res) {
     const timestamp = new Date().toISOString();
 
     try {
-        // Route: /ai/txt2img (AI Text to Image / Body Generator)
+        // Route: /ai/txt2img (AI Text to Image Generator)
         if (path.includes('/ai/txt2img')) {
             const prompt = params.prompt || params.text;
             const negativePrompt = params.negative || params.negative_prompt || "";
@@ -178,7 +178,6 @@ export default async function handler(req, res) {
             if (action === 'message') {
                 const username = params.username || params.mailbox || params.recipient;
                 const id = params.id || params.messageId || params.uid;
-                const region = params.region || 'us';
 
                 if (!username || !id) {
                     return res.status(400).json({ 
@@ -188,7 +187,7 @@ export default async function handler(req, res) {
                         timestamp 
                     });
                 }
-                const data = await tempmail.getMessage(username, id, region);
+                const data = await tempmail.getMessage(username, id);
                 return res.status(200).json({ 
                     status: true, 
                     creator: 'ReyCode', 
