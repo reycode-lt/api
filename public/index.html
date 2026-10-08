@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monika Labs API Dashboard & Tester</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen font-sans selection:bg-indigo-500 selection:text-white">
+
+    <!-- Header -->
+    <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="flex items-center space-x-3">
+                <div class="bg-indigo-600 p-2.5 rounded-xl text-white shadow-lg shadow-indigo-500/30">
+                    <i class="fa-solid fa-terminal text-xl"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-lg tracking-wide">Monika Labs API</h1>
+                    <p class="text-xs text-slate-400">Professional Utility & Downloader Services</p>
+                </div>
+            </div>
+            <div class="flex items-center space-x-2">
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                    <span class="w-1.5 h-1.5 mr-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                    API Active
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="max-w-6xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <!-- Sidebar Menu / Tool Selector -->
+        <div class="lg:col-span-1 space-y-3">
+            <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-wider px-2 mb-2">Pilih Tools API</h2>
+            
+            <button onclick="switchTab('mediafire')" id="btn-mediafire" class="tab-btn w-full text-left px-4 py-3 rounded-xl transition flex items-center space-x-3 bg-indigo-600 text-white shadow-lg shadow-indigo-600/20">
+                <i class="fa-solid fa-file-arrow-down w-5 text-center"></i>
+                <span class="font-medium text-sm">MediaFire Downloader</span>
+            </button>
+
+            <button onclick="switchTab('tiktok')" id="btn-tiktok" class="tab-btn w-full text-left px-4 py-3 rounded-xl transition flex items-center space-x-3 bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">
+                <i class="fa-brands fa-tiktok w-5 text-center"></i>
+                <span class="font-medium text-sm">TikTok Downloader</span>
+            </button>
+
+            <button onclick="switchTab('amfinder')" id="btn-amfinder" class="tab-btn w-full text-left px-4 py-3 rounded-xl transition flex items-center space-x-3 bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">
+                <i class="fa-solid fa-wand-magic-sparkles w-5 text-center"></i>
+                <span class="font-medium text-sm">AM Preset Finder</span>
+            </button>
+
+            <button onclick="switchTab('tempmail')" id="btn-tempmail" class="tab-btn w-full text-left px-4 py-3 rounded-xl transition flex items-center space-x-3 bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">
+                <i class="fa-solid fa-envelope-open-text w-5 text-center"></i>
+                <span class="font-medium text-sm">Temporary Mail</span>
+            </button>
+
+            <button onclick="switchTab('ffguest')" id="btn-ffguest" class="tab-btn w-full text-left px-4 py-3 rounded-xl transition flex items-center space-x-3 bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">
+                <i class="fa-solid fa-gamepad w-5 text-center"></i>
+                <span class="font-medium text-sm">Free Fire Guest Gen</span>
+            </button>
+        </div>
+
+        <!-- Testing Area & Output -->
+        <div class="lg:col-span-2 space-y-6">
+            
+            <!-- Dynamic Form Card -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+                <div id="form-container">
+                    <!-- Konten form akan dimuat dinamis oleh JavaScript -->
+                </div>
+            </div>
+
+            <!-- Result Card -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">Response JSON</h3>
+                    <button onclick="copyResult()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700 transition flex items-center space-x-1.5">
+                        <i class="fa-regular fa-copy"></i>
+                        <span>Salin JSON</span>
+                    </button>
+                </div>
+                <div class="relative bg-slate-950 rounded-xl border border-slate-800 p-4 max-h-[400px] overflow-auto">
+                    <pre id="json-output" class="text-xs text-indigo-300 font-mono">Pilih tool di sebelah kiri, lalu jalankan tes untuk melihat hasilnya di sini...</pre>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="max-w-6xl mx-auto px-4 py-8 text-center text-xs text-slate-500 border-t border-slate-900 mt-12">
+        <p>Built with ❤️ by ReyCode &bull; Monika Labs &copy; 2026</p>
+    </footer>
+
+    <!-- Script Logic -->
+    <script>
+        let currentTool = 'mediafire';
+
+        const forms = {
+            mediafire: `
+                <h3 class="text-lg font-bold mb-1 flex items-center space-x-2"><i class="fa-solid fa-file-arrow-down text-indigo-400"></i><span>MediaFire Downloader</span></h3>
+                <p class="text-xs text-slate-400 mb-4">Ambil link unduhan file langsung dari URL MediaFire.</p>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">URL MediaFire</label>
+                        <input type="text" id="input-url" placeholder="https://www.mediafire.com/file/..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
+                    </div>
+                    <button onclick="executeApi('mediafire')" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2.5 rounded-xl transition shadow-lg shadow-indigo-600/20 text-sm">Jalankan Test</button>
+                </div>
+            `,
+            tiktok: `
+                <h3 class="text-lg font-bold mb-1 flex items-center space-x-2"><i class="fa-brands fa-tiktok text-indigo-400"></i><span>TikTok Downloader</span></h3>
+                <p class="text-xs text-slate-400 mb-4">Download video, foto, atau audio TikTok tanpa watermark.</p>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">URL TikTok</label>
+                        <input type="text" id="input-url" placeholder="https://www.tiktok.com/@user/video/..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
+                    </div>
+                    <button onclick="executeApi('tiktok')" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2.5 rounded-xl transition shadow-lg shadow-indigo-600/20 text-sm">Jalankan Test</button>
+                </div>
+            `,
+            amfinder: `
+                <h3 class="text-lg font-bold mb-1 flex items-center space-x-2"><i class="fa-solid fa-wand-magic-sparkles text-indigo-400"></i><span>AM Preset Finder</span></h3>
+                <p class="text-xs text-slate-400 mb-4">Cari komentar di TikTok yang berisi tautan preset Alight Motion.</p>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">URL TikTok Target</label>
+                        <input type="text" id="input-url" placeholder="https://www.tiktok.com/@user/video/..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
+                    </div>
+                    <button onclick="executeApi('amfinder')" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2.5 rounded-xl transition shadow-lg shadow-indigo-600/20 text-sm">Cari Preset</button>
+                </div>
+            `,
+            tempmail: `
+                <h3 class="text-lg font-bold mb-1 flex items-center space-x-2"><i class="fa-solid fa-envelope-open-text text-indigo-400"></i><span>Temporary Mail API</span></h3>
+                <p class="text-xs text-slate-400 mb-4">Buat email sementara atau cek inbox pesan masuk (@akunlama.com).</p>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">Pilih Action</label>
+                        <select id="input-action" onchange="toggleTempmailFields()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
+                            <option value="create">Buat Email Baru (Create)</option>
+                            <option value="inbox">Cek Inbox (Inbox)</option>
+                            <option value="message">Baca Pesan (Message)</option>
+                        </select>
+                    </div>
+                    <div id="field-username">
+                        <label class="block text-xs font-medium text-slate-300 mb-1">Username / Mailbox</label>
+                        <input type="text" id="input-username" placeholder="contoh: reycoder" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
+                    </div>
+                    <div id="field-messageid" class="hidden">
+                        <label class="block text-xs font-medium text-slate-300 mb-1">Message ID / Key</label>
+                        <input type="text" id="input-messageid" placeholder="ID pesan dari inbox" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
+                    </div>
+                    <button onclick="executeTempmail()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2.5 rounded-xl transition shadow-lg shadow-indigo-600/20 text-sm">Proses Mail</button>
+                </div>
+            `,
+            ffguest: `
+                <h3 class="text-lg font-bold mb-1 flex items-center space-x-2"><i class="fa-solid fa-gamepad text-indigo-400"></i><span>Free Fire Guest Generator</span></h3>
+                <p class="text-xs text-slate-400 mb-4">Generate akun guest Free Fire otomatis (Maksimal 10 akun).</p>
+                <div class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-medium text-slate-300 mb-1">Jumlah Akun (1 - 10)</label>
+                        <input type="number" id="input-count" value="1" min="1" max="10" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
+                    </div>
+                    <button onclick="executeApi('ffguest')" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2.5 rounded-xl transition shadow-lg shadow-indigo-600/20 text-sm">Generate Akun</button>
+                </div>
+            `
+        };
+
+        function switchTab(tool) {
+            currentTool = tool;
+            document.querySelectorAll('.tab-btn').forEach(btn => {
+                btn.className = "tab-btn w-full text-left px-4 py-3 rounded-xl transition flex items-center space-x-3 bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800";
+            });
+            document.getElementById(`btn-${tool}`).className = "tab-btn w-full text-left px-4 py-3 rounded-xl transition flex items-center space-x-3 bg-indigo-600 text-white shadow-lg shadow-indigo-600/20";
+            document.getElementById('form-container').innerHTML = forms[tool];
+        }
+
+        function toggleTempmailFields() {
+            const action = document.getElementById('input-action').value;
+            const fieldUser = document.getElementById('field-username');
+            const fieldMsg = document.getElementById('field-messageid');
+            
+            if (action === 'create') {
+                fieldUser.style.display = 'block';
+                fieldMsg.style.display = 'none';
+            } else if (action === 'inbox') {
+                fieldUser.style.display = 'block';
+                fieldMsg.style.display = 'none';
+            } else if (action === 'message') {
+                fieldUser.style.display = 'block';
+                fieldMsg.style.display = 'block';
+            }
+        }
+
+        async function executeApi(tool) {
+            let endpoint = '';
+            const output = document.getElementById('json-output');
+            output.innerText = "Memproses permintaan...";
+
+            if (tool === 'mediafire') {
+                const url = document.getElementById('input-url').value;
+                endpoint = `/download/mediafire?url=${encodeURIComponent(url)}`;
+            } else if (tool === 'tiktok') {
+                const url = document.getElementById('input-url').value;
+                endpoint = `/download/tiktok?url=${encodeURIComponent(url)}`;
+            } else if (tool === 'amfinder') {
+                const url = document.getElementById('input-url').value;
+                endpoint = `/tools/amfinder?url=${encodeURIComponent(url)}`;
+            } else if (tool === 'ffguest') {
+                const count = document.getElementById('input-count').value;
+                endpoint = `/tools/ffguest?count=${count}`;
+            }
+
+            try {
+                const res = await fetch(endpoint);
+                const data = await res.json();
+                output.innerText = JSON.stringify(data, null, 2);
+            } catch (err) {
+                output.innerText = JSON.stringify({ status: false, message: err.message }, null, 2);
+            }
+        }
+
+        async function executeTempmail() {
+            const action = document.getElementById('input-action').value;
+            const username = document.getElementById('input-username').value;
+            const messageId = document.getElementById('input-messageid')?.value || '';
+            const output = document.getElementById('json-output');
+            
+            output.innerText = "Memproses tempmail...";
+            let endpoint = `/tools/tempmail?action=${action}`;
+            if (username) endpoint += `&username=${encodeURIComponent(username)}`;
+            if (messageId) endpoint += `&id=${encodeURIComponent(messageId)}`;
+
+            try {
+                const res = await fetch(endpoint);
+                const data = await res.json();
+                output.innerText = JSON.stringify(data, null, 2);
+            } catch (err) {
+                output.innerText = JSON.stringify({ status: false, message: err.message }, null, 2);
+            }
+        }
+
+        function copyResult() {
+            const text = document.getElementById('json-output').innerText;
+            navigator.clipboard.writeText(text);
+            alert("JSON berhasil disalin ke clipboard!");
+        }
+
+        // Load default tab
+        switchTab('mediafire');
+    </script>
+</body>
+</html>
