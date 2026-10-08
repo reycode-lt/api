@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/download/mediafire",
+      "destination": "/api/index"
+    }
+  ]
+}
