@@ -5,7 +5,6 @@ import tempmail from '../lib/tempmail.js';
 import { createFreeFireGuest } from '../lib/createguestff.js';
 import { mediaDownloader } from '../lib/aiodownload.js';
 import { sendMagicLink, verifyAndActivate } from '../lib/aligmotion.js';
-import { generateAiImage } from '../lib/texttoimage.js';
 
 export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -24,23 +23,6 @@ export default async function handler(req, res) {
     const timestamp = new Date().toISOString();
 
     try {
-        if (path.includes('/ai/txt2img')) {
-            const prompt = params.prompt || params.text;
-            const negativePrompt = params.negative || params.negative_prompt || "";
-
-            if (!prompt) {
-                return res.status(400).json({ 
-                    status: false, 
-                    creator: 'ReyCode', 
-                    message: "Parameter 'prompt' wajib diisi.",
-                    timestamp 
-                });
-            }
-
-            const result = await generateAiImage(prompt, negativePrompt);
-            return res.status(200).json({ status: true, creator: 'ReyCode', message: "Success", result, timestamp });
-        }
-
         if (path.includes('/tools/amgen')) {
             const action = String(params.action || '').toLowerCase();
             const email = params.email;
