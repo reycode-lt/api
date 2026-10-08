@@ -1,7 +1,7 @@
 import { mediafire } from '../lib/mediafire.js';
 
 export default async function handler(req, res) {
-    // Set header CORS
+    // Set header CORS agar API bisa diakses secara publik
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -12,7 +12,7 @@ export default async function handler(req, res) {
 
     const url = req.query.url || req.query.link || req.body?.url || req.body?.link;
 
-    // Cek jika diakses lewat GET tanpa URL
+    // Jika diakses via GET tanpa parameter url
     if (req.method === 'GET' && !url) {
         return res.status(200).json({
             status: true,
@@ -23,7 +23,7 @@ export default async function handler(req, res) {
         });
     }
 
-    // Proses MediaFire (bisa via GET /download/mediafire?url=... atau POST)
+    // Proses download MediaFire (bisa via GET atau POST)
     if (url) {
         try {
             const result = await mediafire(url);
