@@ -1,305 +1,742 @@
 <!DOCTYPE html>
-<html lang="id">
+<html lang="id" class="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Monika Labs API Dashboard & Documentation</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-</head>
-<body class="bg-slate-950 text-slate-100 min-h-screen font-sans selection:bg-indigo-500 selection:text-white">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
 
-    <!-- Header / Welcome & Base URL Banner -->
-    <header class="border-b border-slate-800 bg-slate-900/60 backdrop-blur sticky top-0 z-50">
-        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
-            <div class="flex items-center space-x-3">
-                <div class="bg-indigo-600 p-3 rounded-xl text-white shadow-lg shadow-indigo-500/30">
-                    <i class="fa-solid fa-terminal text-xl"></i>
+        :root {
+            --bg: #030712;
+            --panel: rgba(15, 23, 42, .75);
+            --border: rgba(148, 163, 184, .12);
+            --primary: #6366f1;
+            --secondary: #8b5cf6;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            background: var(--bg);
+        }
+
+        body {
+            margin: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background:
+                radial-gradient(circle at 10% 0%, rgba(99,102,241,.12), transparent 35%),
+                radial-gradient(circle at 90% 20%, rgba(139,92,246,.10), transparent 30%),
+                var(--bg);
+            color: #f8fafc;
+        }
+
+        ::-webkit-scrollbar {
+            width: 7px;
+            height: 7px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #020617;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(#6366f1, #8b5cf6);
+            border-radius: 999px;
+        }
+
+        .glass-card {
+            background: linear-gradient(145deg, rgba(15,23,42,.85), rgba(15,23,42,.6));
+            border: 1px solid var(--border);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 20px 60px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.03);
+        }
+
+        .glow-effect {
+            box-shadow: 0 0 80px rgba(99,102,241,.12), 0 25px 80px rgba(0,0,0,.4);
+        }
+
+        .custom-input, .custom-select {
+            width: 100%;
+            appearance: none;
+            -webkit-appearance: none;
+            outline: none;
+            color: #e2e8f0;
+            background: linear-gradient(145deg, rgba(2,6,23,.95), rgba(15,23,42,.9));
+            border: 1px solid rgba(148,163,184,.15);
+            border-radius: 16px;
+            padding: 14px 16px;
+            font-size: 13px;
+            transition: all .2s ease;
+        }
+
+        .custom-input::placeholder {
+            color: #475569;
+        }
+
+        .custom-input:focus, .custom-select:focus {
+            border-color: rgba(99,102,241,.8);
+            background: rgba(2,6,23,.98);
+            box-shadow: 0 0 0 4px rgba(99,102,241,.1), 0 10px 30px rgba(0,0,0,.2);
+        }
+
+        .select-wrap {
+            position: relative;
+        }
+
+        .select-wrap::after {
+            content: "\f078";
+            font-family: "Font Awesome 6 Free";
+            font-weight: 900;
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #64748b;
+            pointer-events: none;
+            font-size: 10px;
+        }
+
+        .custom-select {
+            padding-right: 42px;
+            cursor: pointer;
+        }
+
+        .custom-select option {
+            background: #0f172a;
+            color: #e2e8f0;
+        }
+
+        .modern-btn {
+            position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,.08);
+            transition: all .2s ease;
+        }
+
+        .modern-btn:hover {
+            transform: translateY(-1px);
+            filter: brightness(1.08);
+        }
+
+        .primary-btn {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            box-shadow: 0 12px 30px rgba(79,70,229,.3), inset 0 1px 0 rgba(255,255,255,.15);
+        }
+
+        .secondary-btn {
+            background: rgba(30,41,59,.75);
+            border-color: rgba(148,163,184,.12);
+        }
+
+        .copy-btn {
+            background: rgba(99,102,241,.08);
+            border: 1px solid rgba(99,102,241,.2);
+            color: #a5b4fc;
+        }
+
+        .folder-header {
+            cursor: pointer;
+            transition: background .2s ease, border-color .2s ease;
+        }
+
+        .folder-header:hover {
+            background: rgba(30,41,59,.6);
+        }
+
+        .folder-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height .3s ease, opacity .3s ease;
+            opacity: 0;
+        }
+
+        .folder.open .folder-content {
+            max-height: 300px;
+            opacity: 1;
+        }
+
+        .folder.open .folder-arrow {
+            transform: rotate(90deg);
+        }
+
+        .folder-arrow {
+            transition: transform .25s ease;
+        }
+
+        .tool-btn {
+            position: relative;
+            border: 1px solid rgba(148,163,184,.08);
+            background: rgba(15,23,42,.45);
+            transition: all .2s ease;
+        }
+
+        .tool-btn:hover {
+            background: rgba(30,41,59,.75);
+            border-color: rgba(99,102,241,.3);
+            transform: translateX(2px);
+        }
+
+        .tool-btn.active {
+            background: linear-gradient(135deg, rgba(79,70,229,.95), rgba(124,58,237,.9));
+            border-color: rgba(129,140,248,.5);
+            box-shadow: 0 10px 25px rgba(79,70,229,.25), inset 0 1px 0 rgba(255,255,255,.12);
+        }
+
+        .tool-icon {
+            width: 34px;
+            height: 34px;
+            display: grid;
+            place-items: center;
+            flex-shrink: 0;
+            border-radius: 10px;
+            background: rgba(255,255,255,.05);
+            border: 1px solid rgba(255,255,255,.06);
+        }
+
+        .active .tool-icon {
+            background: rgba(255,255,255,.15);
+        }
+
+        .hero-banner {
+            position: relative;
+            overflow: hidden;
+            border-radius: 28px;
+            border: 1px solid rgba(148,163,184,.14);
+            background: #080d18;
+            box-shadow: 0 30px 90px rgba(0,0,0,.35), 0 0 70px rgba(99,102,241,.08);
+        }
+
+        .hero-grid {
+            display: grid;
+            grid-template-columns: 1.05fr .95fr;
+            min-height: 320px;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 3;
+            padding: 36px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: radial-gradient(circle at 0% 50%, rgba(99,102,241,.12), transparent 45%), linear-gradient(90deg, rgba(3,7,18,.98), rgba(3,7,18,.88));
+        }
+
+        .hero-video {
+            position: relative;
+            min-height: 320px;
+            overflow: hidden;
+            background: #020617;
+        }
+
+        .hero-video video {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: .9;
+        }
+
+        .hero-video::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            background: linear-gradient(90deg, rgba(3,7,18,1) 0%, rgba(3,7,18,.4) 25%, rgba(3,7,18,.05) 70%);
+        }
+
+        .datetime-box {
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 14px;
+            border-radius: 16px;
+            width: fit-content;
+            background: rgba(15,23,42,.6);
+            border: 1px solid rgba(148,163,184,.12);
+            backdrop-filter: blur(12px);
+        }
+
+        .clock-time {
+            font-size: 15px;
+            font-weight: 800;
+            letter-spacing: .04em;
+            color: white;
+        }
+
+        .clock-date {
+            font-size: 10px;
+            color: #94a3b8;
+            margin-top: 1px;
+        }
+
+        .code-box {
+            background: #020617;
+            border: 1px solid rgba(148,163,184,.1);
+            border-radius: 16px;
+            box-shadow: inset 0 1px 15px rgba(0,0,0,.25);
+        }
+
+        pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .output-shell {
+            background: radial-gradient(circle at 100% 0%, rgba(99,102,241,.06), transparent 35%), #020617;
+            border: 1px solid rgba(148,163,184,.1);
+        }
+
+        #toast-container {
+            position: fixed;
+            right: 20px;
+            bottom: 20px;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            pointer-events: none;
+        }
+
+        .toast {
+            min-width: 250px;
+            max-width: 360px;
+            padding: 12px 16px;
+            border-radius: 14px;
+            background: rgba(15,23,42,.95);
+            border: 1px solid rgba(148,163,184,.18);
+            box-shadow: 0 20px 50px rgba(0,0,0,.4);
+            backdrop-filter: blur(18px);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            color: #e2e8f0;
+            animation: toastIn .25s ease forwards;
+        }
+
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateY(10px) scale(.97); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+
+        @media (max-width: 900px) {
+            .hero-grid { grid-template-columns: 1fr; }
+            .hero-video { min-height: 220px; order: -1; }
+            .hero-content { padding: 26px; }
+        }
+    </style>
+</head>
+<body class="min-h-screen selection:bg-indigo-500 selection:text-white pb-16">
+
+    <header class="sticky top-0 z-50 border-b border-slate-800/80 bg-[#030712]/85 backdrop-blur-2xl">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div class="flex items-center gap-3.5">
+                    <div class="w-11 h-11 rounded-2xl grid place-items-center bg-gradient-to-br from-indigo-600 to-violet-600 shadow-lg shadow-indigo-600/25">
+                        <i class="fa-solid fa-code text-white"></i>
+                    </div>
+                    <div>
+                        <h1 class="font-extrabold text-base tracking-wide bg-gradient-to-r from-white to-indigo-400 bg-clip-text text-transparent">Monika Labs API</h1>
+                        <p class="text-[10px] sm:text-xs text-slate-500">High Performance Developer Utility Services</p>
+                    </div>
                 </div>
-                <div>
-                    <h1 class="font-bold text-lg tracking-wide">Monika Labs API Dashboard</h1>
-                    <p class="text-xs text-slate-400">Selamat datang, jelajahi dan uji coba endpoint API publik kami secara langsung.</p>
+
+                <div class="flex items-center gap-2 w-full md:w-auto">
+                    <div class="flex-1 md:flex-none flex items-center gap-3 px-4 py-2.5 rounded-2xl bg-slate-900/80 border border-slate-800">
+                        <div class="w-7 h-7 rounded-lg bg-indigo-500/10 grid place-items-center">
+                            <i class="fa-solid fa-link text-indigo-400 text-xs"></i>
+                        </div>
+                        <div class="min-w-0">
+                            <p class="text-[9px] uppercase tracking-wider text-slate-500">Base URL</p>
+                            <code id="base-url-text" class="text-[11px] text-indigo-300 font-mono block truncate">https://api.monikalabs.web.id</code>
+                        </div>
+                        <button onclick="copyBaseUrl()" class="w-8 h-8 rounded-xl grid place-items-center text-slate-400 hover:text-white hover:bg-white/5 transition" title="Salin Base URL">
+                            <i class="fa-regular fa-copy text-xs"></i>
+                        </button>
+                    </div>
                 </div>
-            </div>
-            
-            <!-- Base URL Box -->
-            <div class="bg-slate-950 border border-slate-800 px-4 py-2 rounded-xl flex items-center space-x-3 shadow-inner">
-                <span class="text-xs text-slate-400 font-medium">Base URL:</span>
-                <code id="base-url-text" class="text-xs font-mono text-indigo-400">https://api.monikalabs.web.id</code>
-                <button onclick="copyBaseUrl()" class="text-xs text-slate-400 hover:text-white transition" title="Salin Base URL">
-                    <i class="fa-regular fa-copy"></i>
-                </button>
             </div>
         </div>
     </header>
 
-    <!-- Main Container -->
-    <main class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
-        
-        <!-- Sidebar Menu / Grouped Folders -->
-        <div class="lg:col-span-4 space-y-6">
-            
-            <!-- Folder: /download -->
-            <div class="space-y-2">
-                <div class="flex items-center space-x-2 px-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                    <i class="fa-solid fa-folder-open text-indigo-400"></i>
-                    <span>/download</span>
-                </div>
-                <div class="space-y-1.5 pl-2">
-                    <button onclick="switchTab('mediafire')" id="btn-mediafire" class="tab-btn w-full text-left px-3.5 py-2.5 rounded-xl transition flex items-center justify-between bg-indigo-600 text-white shadow-lg shadow-indigo-600/20 text-sm font-medium">
-                        <span class="flex items-center space-x-2.5">
-                            <i class="fa-solid fa-file-arrow-down w-4"></i>
-                            <span>MediaFire Downloader</span>
-                        </span>
-                        <code class="text-[10px] bg-indigo-700/60 px-1.5 py-0.5 rounded font-mono">/download/mediafire</code>
-                    </button>
+    <main class="max-w-7xl mx-auto px-4 py-7 space-y-7">
 
-                    <button onclick="switchTab('tiktok')" id="btn-tiktok" class="tab-btn w-full text-left px-3.5 py-2.5 rounded-xl transition flex items-center justify-between bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800 text-sm font-medium">
-                        <span class="flex items-center space-x-2.5">
-                            <i class="fa-brands fa-tiktok w-4"></i>
-                            <span>TikTok Downloader</span>
-                        </span>
-                        <code class="text-[10px] bg-slate-800 px-1.5 py-0.5 rounded font-mono text-slate-400">/download/tiktok</code>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Folder: /tools -->
-            <div class="space-y-2">
-                <div class="flex items-center space-x-2 px-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
-                    <i class="fa-solid fa-folder-open text-indigo-400"></i>
-                    <span>/tools</span>
-                </div>
-                <div class="space-y-1.5 pl-2">
-                    <button onclick="switchTab('amfinder')" id="btn-amfinder" class="tab-btn w-full text-left px-3.5 py-2.5 rounded-xl transition flex items-center justify-between bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800 text-sm font-medium">
-                        <span class="flex items-center space-x-2.5">
-                            <i class="fa-solid fa-wand-magic-sparkles w-4"></i>
-                            <span>AM Preset Finder</span>
-                        </span>
-                        <code class="text-[10px] bg-slate-800 px-1.5 py-0.5 rounded font-mono text-slate-400">/tools/amfinder</code>
-                    </button>
-
-                    <button onclick="switchTab('tempmail')" id="btn-tempmail" class="tab-btn w-full text-left px-3.5 py-2.5 rounded-xl transition flex items-center justify-between bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800 text-sm font-medium">
-                        <span class="flex items-center space-x-2.5">
-                            <i class="fa-solid fa-envelope-open-text w-4"></i>
-                            <span>Temporary Mail</span>
-                        </span>
-                        <code class="text-[10px] bg-slate-800 px-1.5 py-0.5 rounded font-mono text-slate-400">/tools/tempmail</code>
-                    </button>
-
-                    <button onclick="switchTab('ffguest')" id="btn-ffguest" class="tab-btn w-full text-left px-3.5 py-2.5 rounded-xl transition flex items-center justify-between bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800 text-sm font-medium">
-                        <span class="flex items-center space-x-2.5">
-                            <i class="fa-solid fa-gamepad w-4"></i>
-                            <span>Free Fire Guest Gen</span>
-                        </span>
-                        <code class="text-[10px] bg-slate-800 px-1.5 py-0.5 rounded font-mono text-slate-400">/tools/ffguest</code>
-                    </button>
-                </div>
-            </div>
-
-        </div>
-
-        <!-- Testing Area & Output -->
-        <div class="lg:col-span-8 space-y-6">
-            
-            <!-- Dynamic Form Card -->
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
-                <div id="form-container"></div>
-            </div>
-
-            <!-- Code Snippet & Endpoint URL Bar -->
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
-                <div class="flex justify-between items-center">
-                    <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Endpoint & Request</h3>
-                    <div class="flex space-x-2">
-                        <button onclick="copyActiveEndpoint()" class="text-xs bg-indigo-600/20 text-indigo-400 hover:bg-indigo-600/30 border border-indigo-500/30 px-3 py-1.5 rounded-lg transition flex items-center space-x-1.5">
-                            <i class="fa-regular fa-copy"></i><span>Salin Endpoint</span>
-                        </button>
+        <section class="hero-banner glow-effect">
+            <div class="hero-grid">
+                <div class="hero-content">
+                    <div class="inline-flex items-center gap-2 w-fit px-3 py-1.5 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-[10px] font-bold tracking-wide mb-4">
+                        <span class="w-2 h-2 rounded-full bg-indigo-400 animate-pulse"></span>
+                        <span>DEVELOPER PORTAL • V2.0</span>
                     </div>
-                </div>
-                
-                <!-- URL yang sedang diuji (mengikuti input) -->
-                <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex items-center justify-between text-xs font-mono text-emerald-400 overflow-x-auto">
-                    <span id="active-url-preview">https://api.monikalabs.web.id/download/mediafire</span>
-                </div>
 
-                <!-- Code Snippets cURL / Node.js -->
-                <div>
-                    <div class="flex justify-between items-center mb-2">
-                        <span class="text-xs text-slate-400">Contoh Kode:</span>
-                        <div class="flex space-x-1 bg-slate-950 p-1 rounded-lg border border-slate-800">
-                            <button onclick="switchSnippet('curl')" id="btn-snippet-curl" class="text-xs px-3 py-1 rounded bg-indigo-600 text-white font-medium transition">cURL</button>
-                            <button onclick="switchSnippet('node')" id="btn-snippet-node" class="text-xs px-3 py-1 rounded text-slate-400 hover:text-white font-medium transition">Node.js</button>
+                    <h2 id="greeting-text" class="text-2xl sm:text-3xl lg:text-4xl font-extrabold tracking-tight leading-tight">Halo, Dev! 👋</h2>
+                    <p class="text-xs sm:text-sm text-slate-400 leading-relaxed max-w-xl mt-3">Pusat dokumentasi dan pengujian endpoint Monika Labs. Pilih folder layanan di samping untuk mulai menguji API.</p>
+
+                    <div class="datetime-box mt-6">
+                        <div class="w-9 h-9 rounded-xl bg-indigo-500/10 border border-indigo-500/15 grid place-items-center">
+                            <i class="fa-regular fa-clock text-indigo-400"></i>
+                        </div>
+                        <div>
+                            <div id="live-time" class="clock-time">00:00:00</div>
+                            <div id="live-date" class="clock-date">Memuat tanggal...</div>
                         </div>
                     </div>
-                    <div class="bg-slate-950 rounded-xl border border-slate-800 p-3 font-mono text-xs text-indigo-300 overflow-x-auto">
-                        <pre id="code-snippet">curl -X GET "..."</pre>
-                    </div>
+                </div>
+
+                <div class="hero-video">
+                    <video autoplay muted loop playsinline preload="metadata">
+                        <source src="https://files.catbox.moe/i5n78c.mp4" type="video/mp4">
+                    </video>
                 </div>
             </div>
+        </section>
 
-            <!-- Response Output (Card View Rapi & Tombol Salin JSON) -->
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
-                <div class="flex justify-between items-center mb-4">
-                    <div class="flex items-center space-x-2">
-                        <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Response Output</h3>
-                        <span id="response-status" class="hidden text-[10px] px-2.5 py-0.5 rounded-full font-medium"></span>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+
+            <aside class="lg:col-span-4">
+                <div class="glass-card rounded-3xl p-4 sticky top-24 space-y-3">
+                    <div class="flex items-center justify-between px-2 py-1">
+                        <div>
+                            <p class="text-[10px] uppercase tracking-[.18em] text-slate-500 font-bold">API FOLDERS</p>
+                            <p class="text-xs text-slate-400 mt-0.5">Klik folder untuk membuka menu</p>
+                        </div>
+                        <div class="w-8 h-8 rounded-xl bg-indigo-500/10 grid place-items-center">
+                            <i class="fa-solid fa-folder-tree text-indigo-400 text-xs"></i>
+                        </div>
                     </div>
-                    
-                    <button onclick="copyResultJson()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3.5 py-1.5 rounded-lg border border-slate-700 transition flex items-center space-x-1.5 shadow">
-                        <i class="fa-regular fa-copy"></i>
-                        <span>Salin JSON</span>
-                    </button>
+
+                    <div class="folder open" id="folder-download">
+                        <div onclick="toggleFolder('folder-download')" class="folder-header flex items-center justify-between px-3 py-2.5 rounded-2xl bg-slate-900/60 border border-slate-800">
+                            <div class="flex items-center gap-2.5">
+                                <i class="fa-solid fa-folder-open text-indigo-400 text-xs"></i>
+                                <span class="text-xs font-bold text-slate-200">/download</span>
+                            </div>
+                            <i class="folder-arrow fa-solid fa-chevron-right text-[10px] text-slate-400"></i>
+                        </div>
+                        <div class="folder-content space-y-1.5 pl-2 pt-2">
+                            <button onclick="switchTab('mediafire')" id="btn-mediafire" class="tab-btn tool-btn active w-full text-left px-3 py-2.5 rounded-2xl flex items-center gap-3">
+                                <span class="tool-icon"><i class="fa-solid fa-file-arrow-down text-xs"></i></span>
+                                <span class="flex-1 min-w-0">
+                                    <span class="block text-xs font-bold truncate">MediaFire Downloader</span>
+                                    <code class="block text-[9px] opacity-60 font-mono mt-0.5">/download/mediafire</code>
+                                </span>
+                            </button>
+                            <button onclick="switchTab('tiktok')" id="btn-tiktok" class="tab-btn tool-btn w-full text-left px-3 py-2.5 rounded-2xl flex items-center gap-3 text-slate-300">
+                                <span class="tool-icon"><i class="fa-brands fa-tiktok text-xs"></i></span>
+                                <span class="flex-1 min-w-0">
+                                    <span class="block text-xs font-bold truncate">TikTok Downloader</span>
+                                    <code class="block text-[9px] text-slate-500 font-mono mt-0.5">/download/tiktok</code>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="folder" id="folder-tools">
+                        <div onclick="toggleFolder('folder-tools')" class="folder-header flex items-center justify-between px-3 py-2.5 rounded-2xl bg-slate-900/60 border border-slate-800">
+                            <div class="flex items-center gap-2.5">
+                                <i class="fa-solid fa-folder text-violet-400 text-xs"></i>
+                                <span class="text-xs font-bold text-slate-200">/tools</span>
+                            </div>
+                            <i class="folder-arrow fa-solid fa-chevron-right text-[10px] text-slate-400"></i>
+                        </div>
+                        <div class="folder-content space-y-1.5 pl-2 pt-2">
+                            <button onclick="switchTab('amfinder')" id="btn-amfinder" class="tab-btn tool-btn w-full text-left px-3 py-2.5 rounded-2xl flex items-center gap-3 text-slate-300">
+                                <span class="tool-icon"><i class="fa-solid fa-wand-magic-sparkles text-xs"></i></span>
+                                <span class="flex-1 min-w-0">
+                                    <span class="block text-xs font-bold truncate">AM Preset Finder</span>
+                                    <code class="block text-[9px] text-slate-500 font-mono mt-0.5">/tools/amfinder</code>
+                                </span>
+                            </button>
+                            <button onclick="switchTab('tempmail')" id="btn-tempmail" class="tab-btn tool-btn w-full text-left px-3 py-2.5 rounded-2xl flex items-center gap-3 text-slate-300">
+                                <span class="tool-icon"><i class="fa-solid fa-envelope-open-text text-xs"></i></span>
+                                <span class="flex-1 min-w-0">
+                                    <span class="block text-xs font-bold truncate">Temporary Mail</span>
+                                    <code class="block text-[9px] text-slate-500 font-mono mt-0.5">/tools/tempmail</code>
+                                </span>
+                            </button>
+                            <button onclick="switchTab('ffguest')" id="btn-ffguest" class="tab-btn tool-btn w-full text-left px-3 py-2.5 rounded-2xl flex items-center gap-3 text-slate-300">
+                                <span class="tool-icon"><i class="fa-solid fa-gamepad text-xs"></i></span>
+                                <span class="flex-1 min-w-0">
+                                    <span class="block text-xs font-bold truncate">Free Fire Guest Gen</span>
+                                    <code class="block text-[9px] text-slate-500 font-mono mt-0.5">/tools/ffguest</code>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <section class="lg:col-span-8 space-y-6">
+                <div class="glass-card rounded-3xl p-5 sm:p-7">
+                    <div id="form-container"></div>
                 </div>
 
-                <!-- Card UI Container (Clean & Structured) -->
-                <div id="output-card-container" class="bg-slate-950 rounded-xl border border-slate-800 p-4 min-h-[160px] text-sm">
-                    <p class="text-xs text-slate-500 italic">Hasil uji coba API akan tampil dalam bentuk card visual yang rapi di sini...</p>
-                </div>
-            </div>
+                <div class="glass-card rounded-3xl p-5 sm:p-7">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                        <div>
+                            <p class="text-[10px] uppercase tracking-[.18em] text-slate-500 font-bold">REQUEST BUILDER</p>
+                            <h3 class="text-sm font-bold text-white mt-1">Endpoint & Request</h3>
+                        </div>
+                        <button onclick="copyActiveEndpoint()" class="modern-btn copy-btn rounded-xl px-3.5 py-2 text-[10px] font-bold flex items-center justify-center gap-2">
+                            <i class="fa-regular fa-copy"></i> Salin Endpoint
+                        </button>
+                    </div>
 
+                    <div class="code-box px-4 py-3.5 flex items-center gap-3 overflow-hidden">
+                        <span class="text-indigo-400 flex-shrink-0"><i class="fa-solid fa-terminal text-xs"></i></span>
+                        <span id="active-url-preview" class="text-[11px] text-emerald-400 font-mono whitespace-nowrap overflow-x-auto">https://api.monikalabs.web.id/download/mediafire</span>
+                    </div>
+
+                    <div class="mt-5">
+                        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-2">
+                            <span class="text-[10px] uppercase tracking-wider text-slate-500 font-bold">Contoh Snippet</span>
+                            <div class="flex items-center gap-1 p-1 rounded-xl bg-slate-950 border border-slate-800 w-fit">
+                                <button onclick="switchSnippet('curl')" id="btn-snippet-curl" class="text-[10px] px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-bold transition">cURL</button>
+                                <button onclick="switchSnippet('node')" id="btn-snippet-node" class="text-[10px] px-3 py-1.5 rounded-lg text-slate-500 hover:text-white font-bold transition">Node.js</button>
+                            </div>
+                        </div>
+                        <div class="code-box p-4 overflow-x-auto">
+                            <pre id="code-snippet" class="text-[11px] leading-relaxed text-indigo-300 font-mono">curl -X GET "..."</pre>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card rounded-3xl p-5 sm:p-7">
+                    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+                        <div class="flex items-center gap-3">
+                            <div>
+                                <p class="text-[10px] uppercase tracking-[.18em] text-slate-500 font-bold">API RESPONSE</p>
+                                <h3 class="text-sm font-bold text-white mt-1">Response Output</h3>
+                            </div>
+                            <span id="response-status" class="hidden text-[9px] px-2.5 py-1 rounded-full font-extrabold"></span>
+                        </div>
+                        <button onclick="copyResultJson()" class="modern-btn secondary-btn rounded-xl px-3.5 py-2 text-[10px] text-slate-300 font-bold flex items-center justify-center gap-2">
+                            <i class="fa-regular fa-copy"></i> Salin JSON
+                        </button>
+                    </div>
+
+                    <div id="output-card-container" class="output-shell rounded-2xl p-5 min-h-[190px]">
+                        <div class="flex flex-col items-center justify-center min-h-[150px] text-center">
+                            <div class="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/10 grid place-items-center mb-3">
+                                <i class="fa-solid fa-code text-indigo-400"></i>
+                            </div>
+                            <p class="text-xs font-semibold text-slate-400">Belum ada response</p>
+                            <p class="text-[10px] text-slate-600 mt-1 max-w-xs">Jalankan endpoint untuk melihat hasil response dalam tampilan visual.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
     </main>
 
-    <!-- Footer -->
-    <footer class="max-w-7xl mx-auto px-4 py-8 text-center text-xs text-slate-500 border-t border-slate-900 mt-12">
-        <p>Built with ❤️ by ReyCode &bull; Monika Labs &copy; 2026</p>
+    <footer class="max-w-7xl mx-auto px-4 pt-5">
+        <div class="border-t border-slate-900 py-7 flex flex-col sm:flex-row items-center justify-between gap-3">
+            <p class="text-[10px] text-slate-600">Designed with excellence by ReyCode • Monika Labs © 2026</p>
+            <div class="flex items-center gap-2 text-[9px] text-slate-600">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span> All systems operational
+            </div>
+        </div>
     </footer>
 
-    <!-- Script Logic -->
+    <div id="toast-container"></div>
+
     <script>
         let currentTool = 'mediafire';
         let currentSnippetType = 'curl';
         let lastApiResponse = null;
         const baseUrl = window.location.origin;
 
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast`;
+            toast.innerHTML = `<i class="fa-solid ${type === 'success' ? 'fa-circle-check text-emerald-400' : 'fa-circle-exclamation text-rose-400'}"></i><span>${escapeHtml(message)}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 250);
+            }, 2600);
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+        }
+
+        function toggleFolder(folderId) {
+            const folder = document.getElementById(folderId);
+            folder.classList.toggle('open');
+        }
+
+        function updateDateTime() {
+            const now = new Date();
+            document.getElementById('live-time').textContent = now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+            document.getElementById('live-date').textContent = now.toLocaleDateString('id-ID', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
+        }
+
+        function setDynamicGreeting() {
+            const hour = new Date().getHours();
+            let greeting = hour >= 4 && hour < 11 ? 'Selamat Pagi' : hour >= 11 && hour < 15 ? 'Selamat Siang' : hour >= 15 && hour < 18 ? 'Selamat Sore' : 'Selamat Malam';
+            document.getElementById('greeting-text').innerHTML = `${greeting} Dev! 👋`;
+        }
+
         const forms = {
             mediafire: {
-                title: "MediaFire Downloader",
-                endpoint: "/download/mediafire",
-                desc: "Ambil link unduhan file langsung dari URL MediaFire.",
+                endpoint: '/download/mediafire',
                 html: `
-                    <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">URL MediaFire</label>
-                        <input type="text" id="input-url" oninput="updateLiveUrl()" placeholder="https://www.mediafire.com/file/..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
+                    <div class="flex items-start gap-4 mb-6">
+                        <div class="w-11 h-11 rounded-2xl bg-indigo-500/10 border border-indigo-500/10 grid place-items-center flex-shrink-0"><i class="fa-solid fa-file-arrow-down text-indigo-400"></i></div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h3 class="text-lg font-extrabold text-white">MediaFire Downloader</h3>
+                                <code class="text-[9px] text-indigo-300 bg-indigo-500/10 px-2 py-1 rounded-lg">GET</code>
+                            </div>
+                            <p class="text-[11px] text-slate-500 mt-1">Ambil direct download URL dari file MediaFire.</p>
+                        </div>
                     </div>
-                    <button onclick="executeApi('mediafire')" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2.5 rounded-xl transition shadow-lg shadow-indigo-600/20 text-sm">Jalankan Test</button>
+                    <div class="space-y-2">
+                        <label class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">URL MediaFire</label>
+                        <input type="text" id="input-url" oninput="updateLiveUrl()" placeholder="https://www.mediafire.com/file/..." class="custom-input">
+                    </div>
+                    <button onclick="executeApi('mediafire')" class="modern-btn primary-btn w-full mt-4 rounded-2xl py-3.5 text-xs font-extrabold text-white"><i class="fa-solid fa-play mr-2"></i>Jalankan Test API</button>
                 `
             },
             tiktok: {
-                title: "TikTok Downloader",
-                endpoint: "/download/tiktok",
-                desc: "Download video, foto, atau audio TikTok tanpa watermark.",
+                endpoint: '/download/tiktok',
                 html: `
-                    <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">URL TikTok</label>
-                        <input type="text" id="input-url" oninput="updateLiveUrl()" placeholder="https://www.tiktok.com/@user/video/..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
+                    <div class="flex items-start gap-4 mb-6">
+                        <div class="w-11 h-11 rounded-2xl bg-slate-500/10 border border-slate-700/30 grid place-items-center flex-shrink-0"><i class="fa-brands fa-tiktok text-white"></i></div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h3 class="text-lg font-extrabold text-white">TikTok Downloader</h3>
+                                <code class="text-[9px] text-indigo-300 bg-indigo-500/10 px-2 py-1 rounded-lg">GET</code>
+                            </div>
+                            <p class="text-[11px] text-slate-500 mt-1">Download video, foto, atau audio dari URL TikTok.</p>
+                        </div>
                     </div>
-                    <button onclick="executeApi('tiktok')" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2.5 rounded-xl transition shadow-lg shadow-indigo-600/20 text-sm">Jalankan Test</button>
+                    <div class="space-y-2">
+                        <label class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">URL TikTok</label>
+                        <input type="text" id="input-url" oninput="updateLiveUrl()" placeholder="https://www.tiktok.com/@user/video/..." class="custom-input">
+                    </div>
+                    <button onclick="executeApi('tiktok')" class="modern-btn primary-btn w-full mt-4 rounded-2xl py-3.5 text-xs font-extrabold text-white"><i class="fa-solid fa-play mr-2"></i>Jalankan Test API</button>
                 `
             },
             amfinder: {
-                title: "AM Preset Finder",
-                endpoint: "/tools/amfinder",
-                desc: "Cari komentar di TikTok yang berisi tautan preset Alight Motion.",
+                endpoint: '/tools/amfinder',
                 html: `
-                    <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">URL TikTok Target</label>
-                        <input type="text" id="input-url" oninput="updateLiveUrl()" placeholder="https://www.tiktok.com/@user/video/..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
+                    <div class="flex items-start gap-4 mb-6">
+                        <div class="w-11 h-11 rounded-2xl bg-violet-500/10 border border-violet-500/10 grid place-items-center flex-shrink-0"><i class="fa-solid fa-wand-magic-sparkles text-violet-400"></i></div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h3 class="text-lg font-extrabold text-white">AM Preset Finder</h3>
+                                <code class="text-[9px] text-violet-300 bg-violet-500/10 px-2 py-1 rounded-lg">TOOL</code>
+                            </div>
+                            <p class="text-[11px] text-slate-500 mt-1">Cari preset Alight Motion dari video TikTok.</p>
+                        </div>
                     </div>
-                    <button onclick="executeApi('amfinder')" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2.5 rounded-xl transition shadow-lg shadow-indigo-600/20 text-sm">Cari Preset</button>
+                    <div class="space-y-2">
+                        <label class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">URL TikTok Target</label>
+                        <input type="text" id="input-url" oninput="updateLiveUrl()" placeholder="https://www.tiktok.com/@user/video/..." class="custom-input">
+                    </div>
+                    <button onclick="executeApi('amfinder')" class="modern-btn primary-btn w-full mt-4 rounded-2xl py-3.5 text-xs font-extrabold text-white"><i class="fa-solid fa-magnifying-glass mr-2"></i>Cari Preset</button>
                 `
             },
             tempmail: {
-                title: "Temporary Mail",
-                endpoint: "/tools/tempmail",
-                desc: "Buat email sementara atau cek inbox pesan masuk (@akunlama.com).",
+                endpoint: '/tools/tempmail',
                 html: `
-                    <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">Pilih Action</label>
-                        <select id="input-action" onchange="toggleTempmailFields(); updateLiveUrl();" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
-                            <option value="create">Buat Email Baru (Create)</option>
-                            <option value="inbox">Cek Inbox (Inbox)</option>
-                            <option value="message">Baca Pesan (Message)</option>
-                        </select>
+                    <div class="flex items-start gap-4 mb-6">
+                        <div class="w-11 h-11 rounded-2xl bg-cyan-500/10 border border-cyan-500/10 grid place-items-center flex-shrink-0"><i class="fa-solid fa-envelope-open-text text-cyan-400"></i></div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h3 class="text-lg font-extrabold text-white">Temporary Mail</h3>
+                                <code class="text-[9px] text-cyan-300 bg-cyan-500/10 px-2 py-1 rounded-lg">TOOL</code>
+                            </div>
+                            <p class="text-[11px] text-slate-500 mt-1">Buat mailbox sementara dan cek pesan masuk.</p>
+                        </div>
                     </div>
-                    <div id="field-username">
-                        <label class="block text-xs font-medium text-slate-300 mb-1">Username / Mailbox</label>
-                        <input type="text" id="input-username" oninput="updateLiveUrl()" placeholder="contoh: reycoder" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
+                    <div class="space-y-4">
+                        <div class="space-y-2">
+                            <label class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Action</label>
+                            <div class="select-wrap">
+                                <select id="input-action" onchange="toggleTempmailFields(); updateLiveUrl();" class="custom-select">
+                                    <option value="create">Buat Email Baru (Create)</option>
+                                    <option value="inbox">Cek Inbox (Inbox)</option>
+                                    <option value="message">Baca Pesan (Message)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div id="field-username" class="space-y-2">
+                            <label class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Username / Mailbox</label>
+                            <input type="text" id="input-username" oninput="updateLiveUrl()" placeholder="contoh: reycoder" class="custom-input">
+                        </div>
+                        <div id="field-messageid" class="hidden space-y-2">
+                            <label class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Message ID / Key</label>
+                            <input type="text" id="input-messageid" oninput="updateLiveUrl()" placeholder="ID pesan dari inbox" class="custom-input">
+                        </div>
                     </div>
-                    <div id="field-messageid" class="hidden">
-                        <label class="block text-xs font-medium text-slate-300 mb-1">Message ID / Key</label>
-                        <input type="text" id="input-messageid" oninput="updateLiveUrl()" placeholder="ID pesan dari inbox" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
-                    </div>
-                    <button onclick="executeTempmail()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2.5 rounded-xl transition shadow-lg shadow-indigo-600/20 text-sm">Proses Mail</button>
+                    <button onclick="executeTempmail()" class="modern-btn primary-btn w-full mt-4 rounded-2xl py-3.5 text-xs font-extrabold text-white"><i class="fa-solid fa-paper-plane mr-2"></i>Proses Mail</button>
                 `
             },
             ffguest: {
-                title: "Free Fire Guest Generator",
-                endpoint: "/tools/ffguest",
-                desc: "Generate akun guest Free Fire otomatis (Maksimal 10 akun).",
+                endpoint: '/tools/ffguest',
                 html: `
-                    <div>
-                        <label class="block text-xs font-medium text-slate-300 mb-1">Jumlah Akun (1 - 10)</label>
-                        <input type="number" id="input-count" value="1" min="1" max="10" oninput="updateLiveUrl()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
+                    <div class="flex items-start gap-4 mb-6">
+                        <div class="w-11 h-11 rounded-2xl bg-orange-500/10 border border-orange-500/10 grid place-items-center flex-shrink-0"><i class="fa-solid fa-gamepad text-orange-400"></i></div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h3 class="text-lg font-extrabold text-white">Free Fire Guest Generator</h3>
+                                <code class="text-[9px] text-orange-300 bg-orange-500/10 px-2 py-1 rounded-lg">TOOL</code>
+                            </div>
+                            <p class="text-[11px] text-slate-500 mt-1">Generate akun guest secara otomatis.</p>
+                        </div>
                     </div>
-                    <button onclick="executeApi('ffguest')" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2.5 rounded-xl transition shadow-lg shadow-indigo-600/20 text-sm">Generate Akun</button>
+                    <div class="space-y-2">
+                        <label class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Jumlah Akun (1 - 10)</label>
+                        <input type="number" id="input-count" value="1" min="1" max="10" oninput="updateLiveUrl()" class="custom-input">
+                    </div>
+                    <button onclick="executeApi('ffguest')" class="modern-btn primary-btn w-full mt-4 rounded-2xl py-3.5 text-xs font-extrabold text-white"><i class="fa-solid fa-bolt mr-2"></i>Generate Akun</button>
                 `
             }
         };
 
         function switchTab(tool) {
             currentTool = tool;
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.className = "tab-btn w-full text-left px-3.5 py-2.5 rounded-xl transition flex items-center justify-between bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800 text-sm font-medium";
-            });
-            document.getElementById(`btn-${tool}`).className = "tab-btn w-full text-left px-3.5 py-2.5 rounded-xl transition flex items-center justify-between bg-indigo-600 text-white shadow-lg shadow-indigo-600/20 text-sm font-medium";
-            
-            const currentForm = forms[tool];
-            document.getElementById('form-container').innerHTML = `
-                <div class="flex justify-between items-start mb-2">
-                    <div>
-                        <h3 class="text-lg font-bold">${currentForm.title}</h3>
-                        <p class="text-xs text-slate-400">${currentForm.desc}</p>
-                    </div>
-                    <code class="text-xs bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-800 font-mono text-indigo-400">${currentForm.endpoint}</code>
-                </div>
-                <div class="space-y-4 mt-4">${currentForm.html}</div>
-            `;
-            
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            const activeButton = document.getElementById(`btn-${tool}`);
+            if (activeButton) activeButton.classList.add('active');
+            document.getElementById('form-container').innerHTML = forms[tool].html;
             updateLiveUrl();
         }
 
         function toggleTempmailFields() {
-            const action = document.getElementById('input-action').value;
+            const action = document.getElementById('input-action')?.value;
             const fieldUser = document.getElementById('field-username');
             const fieldMsg = document.getElementById('field-messageid');
-            
-            if (action === 'create') {
-                fieldUser.style.display = 'block';
-                fieldMsg.style.display = 'none';
-            } else if (action === 'inbox') {
-                fieldUser.style.display = 'block';
-                fieldMsg.style.display = 'none';
-            } else if (action === 'message') {
-                fieldUser.style.display = 'block';
-                fieldMsg.style.display = 'block';
-            }
+            if (!fieldUser || !fieldMsg) return;
+            fieldMsg.style.display = action === 'message' ? 'block' : 'none';
         }
 
         function getConstructedUrl() {
             const endpoint = forms[currentTool].endpoint;
             let queryStr = '';
-
             if (currentTool === 'mediafire' || currentTool === 'tiktok' || currentTool === 'amfinder') {
                 const val = document.getElementById('input-url')?.value.trim() || '';
                 if (val) queryStr = `?url=${encodeURIComponent(val)}`;
             } else if (currentTool === 'ffguest') {
                 const val = document.getElementById('input-count')?.value || 1;
-                queryStr = `?count=${val}`;
+                queryStr = `?count=${encodeURIComponent(val)}`;
             } else if (currentTool === 'tempmail') {
                 const action = document.getElementById('input-action')?.value || 'create';
-                queryStr = `?action=${action}`;
+                queryStr = `?action=${encodeURIComponent(action)}`;
                 if (action === 'inbox' || action === 'message') {
                     const user = document.getElementById('input-username')?.value.trim();
                     if (user) queryStr += `&username=${encodeURIComponent(user)}`;
@@ -309,135 +746,66 @@
                     if (msgId) queryStr += `&id=${encodeURIComponent(msgId)}`;
                 }
             }
-
             return `${baseUrl}${endpoint}${queryStr}`;
         }
 
         function updateLiveUrl() {
             const fullUrl = getConstructedUrl();
-            document.getElementById('active-url-preview').innerText = fullUrl;
-            
-            if (currentSnippetType === 'curl') {
-                document.getElementById('code-snippet').innerText = `curl -X GET "${fullUrl}"`;
-            } else {
-                document.getElementById('code-snippet').innerText = `const res = await fetch("${fullUrl}");\nconst data = await res.json();\nconsole.log(data);`;
-            }
+            document.getElementById('active-url-preview').textContent = fullUrl;
+            document.getElementById('code-snippet').textContent = currentSnippetType === 'curl' ? `curl -X GET "${fullUrl}"` : `const res = await fetch("${fullUrl}");\nconst data = await res.json();\nconsole.log(data);`;
         }
 
         function switchSnippet(type) {
             currentSnippetType = type;
-            document.getElementById('btn-snippet-curl').className = type === 'curl' ? 'text-xs px-3 py-1 rounded bg-indigo-600 text-white font-medium transition' : 'text-xs px-3 py-1 rounded text-slate-400 hover:text-white font-medium transition';
-            document.getElementById('btn-snippet-node').className = type === 'node' ? 'text-xs px-3 py-1 rounded bg-indigo-600 text-white font-medium transition' : 'text-xs px-3 py-1 rounded text-slate-400 hover:text-white font-medium transition';
+            document.getElementById('btn-snippet-curl').className = type === 'curl' ? 'text-[10px] px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-bold transition' : 'text-[10px] px-3 py-1.5 rounded-lg text-slate-500 hover:text-white font-bold transition';
+            document.getElementById('btn-snippet-node').className = type === 'node' ? 'text-[10px] px-3 py-1.5 rounded-lg bg-indigo-600 text-white font-bold transition' : 'text-[10px] px-3 py-1.5 rounded-lg text-slate-500 hover:text-white font-bold transition';
             updateLiveUrl();
         }
 
         function renderStructuredCard(data) {
             lastApiResponse = data;
             const statusBadge = document.getElementById('response-status');
+            const container = document.getElementById('output-card-container');
             statusBadge.classList.remove('hidden');
-            
+
             if (data.status) {
-                statusBadge.className = "text-[10px] px-2.5 py-0.5 rounded-full font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
-                statusBadge.innerText = "SUCCESS (200)";
+                statusBadge.className = 'text-[9px] px-2.5 py-1 rounded-full font-extrabold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
+                statusBadge.innerText = 'SUCCESS • 200';
             } else {
-                statusBadge.className = "text-[10px] px-2.5 py-0.5 rounded-full font-medium bg-rose-500/10 text-rose-400 border border-rose-500/20";
-                statusBadge.innerText = "FAILED / ERROR";
+                statusBadge.className = 'text-[9px] px-2.5 py-1 rounded-full font-extrabold bg-rose-500/10 text-rose-400 border border-rose-500/20';
+                statusBadge.innerText = 'FAILED / ERROR';
             }
 
-            const container = document.getElementById('output-card-container');
-            let html = '';
-
             if (!data.status) {
-                container.innerHTML = `
-                    <div class="bg-rose-500/10 border border-rose-500/20 rounded-xl p-4 text-rose-400 text-xs">
-                        <p class="font-bold mb-1">Gagal Memproses:</p>
-                        <p>${data.message || 'Terjadi kesalahan sistem.'}</p>
-                    </div>
-                `;
+                container.innerHTML = `<div class="rounded-2xl p-5 bg-rose-500/5 border border-rose-500/15"><div class="flex items-start gap-3"><div class="w-9 h-9 rounded-xl bg-rose-500/10 grid place-items-center flex-shrink-0"><i class="fa-solid fa-triangle-exclamation text-rose-400 text-xs"></i></div><div><p class="text-xs font-bold text-rose-300">Gagal Memproses</p><p class="text-[11px] text-rose-400/80 mt-1">${escapeHtml(data.message || 'Terjadi kesalahan sistem.')}</p></div></div></div>`;
                 return;
             }
 
-            // Render khusus TikTok Downloader dengan Video Preview
+            let html = '';
             if (currentTool === 'tiktok' && data.result) {
                 const res = data.result;
-                html += `
-                    <div class="space-y-4">
-                        <div class="flex items-center space-x-3 bg-slate-900 p-3 rounded-xl border border-slate-800">
-                            ${res.author?.avatar ? `<img src="${res.author.avatar}" class="w-10 h-10 rounded-full border border-slate-700">` : ''}
-                            <div>
-                                <h4 class="font-bold text-sm text-slate-200">${res.author?.nickname || 'TikTok User'}</h4>
-                                <p class="text-xs text-slate-400">@${res.author?.fullname || '-'}</p>
-                            </div>
-                        </div>
-
-                        <p class="text-xs text-slate-300 font-medium">${res.title || '-'}</p>
-
-                        ${res.video_url ? `
-                            <div class="rounded-xl overflow-hidden border border-slate-800 bg-black flex justify-center">
-                                <video src="${res.video_url}" controls class="max-h-[300px] w-auto"></video>
-                            </div>
-                            <div class="flex gap-2">
-                                <a href="${res.video_url}" target="_blank" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-center py-2 rounded-xl text-xs font-medium text-white transition">Download Video</a>
-                                ${res.audio_url ? `<a href="${res.audio_url}" target="_blank" class="flex-1 bg-slate-800 hover:bg-slate-700 text-center py-2 rounded-xl text-xs font-medium text-slate-200 transition">Download Audio</a>` : ''}
-                            </div>
-                        ` : ''}
-                    </div>
-                `;
-            } 
-            // Render khusus MediaFire
-            else if (currentTool === 'mediafire' && data.result) {
+                html += `<div class="space-y-4"><div class="rounded-2xl p-4 bg-slate-900/65 border border-slate-800 flex items-center gap-3">${res.author?.avatar ? `<img src="${escapeHtml(res.author.avatar)}" class="w-11 h-11 rounded-full border border-slate-700 object-cover">` : `<div class="w-11 h-11 rounded-full bg-indigo-500/10 grid place-items-center"><i class="fa-solid fa-user text-indigo-400"></i></div>`}<div class="min-w-0"><h4 class="font-bold text-sm text-slate-200 truncate">${escapeHtml(res.author?.nickname || 'TikTok User')}</h4><p class="text-[10px] text-slate-500 truncate">@${escapeHtml(res.author?.fullname || '-')}</p></div></div><div class="text-xs text-slate-300 leading-relaxed">${escapeHtml(res.title || '-')}</div>${res.video_url ? `<div class="rounded-2xl overflow-hidden border border-slate-800 bg-black flex justify-center"><video src="${escapeHtml(res.video_url)}" controls playsinline class="max-h-[360px] w-auto max-w-full"></video></div><div class="grid grid-cols-1 sm:grid-cols-2 gap-2"><a href="${escapeHtml(res.video_url)}" target="_blank" rel="noopener noreferrer" class="modern-btn primary-btn text-center py-3 rounded-xl text-[10px] font-extrabold text-white"><i class="fa-solid fa-download mr-1.5"></i>Download Video</a>${res.audio_url ? `<a href="${escapeHtml(res.audio_url)}" target="_blank" rel="noopener noreferrer" class="modern-btn secondary-btn text-center py-3 rounded-xl text-[10px] font-extrabold text-slate-200"><i class="fa-solid fa-music mr-1.5"></i>Download Audio</a>` : ''}</div>` : ''}</div>`;
+            } else if (currentTool === 'mediafire' && data.result) {
                 const r = data.result;
-                html += `
-                    <div class="space-y-3 bg-slate-900 p-4 rounded-xl border border-slate-800 text-xs">
-                        <p class="font-bold text-sm text-slate-200">${r.fileName || 'File MediaFire'}</p>
-                        <div class="grid grid-cols-2 gap-2 text-slate-400">
-                            <div>Ukuran: <span class="text-slate-200 font-medium">${r.fileSize || '-'}</span></div>
-                            <div>Upload: <span class="text-slate-200 font-medium">${r.uploadDate || '-'}</span></div>
-                        </div>
-                        <a href="${r.downloadUrl}" target="_blank" class="block w-full bg-emerald-600 hover:bg-emerald-500 text-center py-2.5 rounded-xl text-xs font-bold text-white transition mt-2">Unduh File Sekarang</a>
-                    </div>
-                `;
-            }
-            // Render Free Fire Guest
-            else if (currentTool === 'ffguest' && data.result) {
-                html += `<div class="space-y-3 max-h-[300px] overflow-auto">`;
-                data.result.accounts.forEach(acc => {
-                    html += `
-                        <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 text-xs flex justify-between items-center">
-                            <div>
-                                <p class="text-indigo-400 font-bold">Akun #${acc.index}</p>
-                                <p class="text-slate-300 font-mono">UID: ${acc.uid}</p>
-                                <p class="text-slate-500 font-mono truncate max-w-[200px]">Pass: ${acc.password}</p>
-                            </div>
-                            <button onclick="navigator.clipboard.writeText('UID: ${acc.uid} | Pass: ${acc.password}'); alert('Akun disalin!');" class="bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg text-slate-300">Salin</button>
-                        </div>
-                    `;
+                html += `<div class="rounded-2xl p-5 bg-slate-900/65 border border-slate-800"><div class="flex items-start gap-3"><div class="w-10 h-10 rounded-xl bg-indigo-500/10 grid place-items-center"><i class="fa-solid fa-file text-indigo-400"></i></div><div class="min-w-0"><p class="text-sm font-extrabold text-white truncate">${escapeHtml(r.fileName || 'File MediaFire')}</p><p class="text-[10px] text-slate-500 mt-1">MediaFire File</p></div></div><div class="grid grid-cols-2 gap-3 mt-5"><div class="rounded-xl bg-slate-950/70 border border-slate-800 p-3"><p class="text-[9px] text-slate-600 uppercase">Ukuran</p><p class="text-xs text-slate-300 font-bold mt-1">${escapeHtml(r.fileSize || '-')}</p></div><div class="rounded-xl bg-slate-950/70 border border-slate-800 p-3"><p class="text-[9px] text-slate-600 uppercase">Upload</p><p class="text-xs text-slate-300 font-bold mt-1">${escapeHtml(r.uploadDate || '-')}</p></div></div><a href="${escapeHtml(r.downloadUrl || '#')}" target="_blank" rel="noopener noreferrer" class="modern-btn primary-btn block text-center w-full py-3 rounded-xl text-[10px] font-extrabold text-white mt-4"><i class="fa-solid fa-download mr-1.5"></i>Unduh File Sekarang</a></div>`;
+            } else if (currentTool === 'ffguest' && data.result) {
+                const accounts = Array.isArray(data.result.accounts) ? data.result.accounts : [];
+                html += `<div class="space-y-2.5">`;
+                accounts.forEach(acc => {
+                    const credentials = `UID: ${acc.uid} | Pass: ${acc.password}`;
+                    html += `<div class="rounded-2xl p-4 bg-slate-900/65 border border-slate-800"><div class="flex items-center justify-between gap-3"><div class="min-w-0"><p class="text-[10px] text-indigo-400 font-extrabold uppercase">Account #${escapeHtml(acc.index)}</p><p class="text-xs text-slate-200 font-mono mt-2">UID: ${escapeHtml(acc.uid)}</p><p class="text-[11px] text-slate-500 font-mono mt-1 truncate">Pass: ${escapeHtml(acc.password)}</p></div><button onclick="copyText('${String(credentials).replace(/\\/g, '\\\\').replace(/'/g, "\\'")}')" class="modern-btn copy-btn rounded-xl px-3 py-2 text-[10px] font-bold flex-shrink-0"><i class="fa-regular fa-copy mr-1"></i>Salin</button></div></div>`;
                 });
                 html += `</div>`;
+            } else {
+                html += `<div class="rounded-2xl p-4 bg-slate-900/65 border border-slate-800"><div class="flex flex-wrap items-center justify-between gap-2 mb-3"><span class="inline-flex items-center gap-2 text-[10px] text-emerald-400 font-bold"><span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>Request Berhasil</span><span class="text-[10px] text-slate-600">Provider: ${escapeHtml(data.provider || 'Monika Labs')}</span></div><div class="code-box p-4 overflow-auto max-h-[350px]"><pre class="text-[10px] leading-relaxed text-indigo-300 font-mono">${escapeHtml(JSON.stringify(data.result || data.data || data, null, 2))}</pre></div></div>`;
             }
-            // Render TempMail & lainnya dalam Card rapi
-            else {
-                html += `
-                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-2 text-xs">
-                        <div class="flex justify-between text-slate-400">
-                            <span>Status: Berhasil</span>
-                            <span>Provider: ${data.provider || 'Monika Labs'}</span>
-                        </div>
-                        <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 font-mono text-indigo-300 overflow-x-auto max-h-[250px]">
-                            <pre>${JSON.stringify(data.result || data.data || data, null, 2)}</pre>
-                        </div>
-                    </div>
-                `;
-            }
-
             container.innerHTML = html;
         }
 
         async function executeApi(tool) {
             const endpointUrl = getConstructedUrl();
             const container = document.getElementById('output-card-container');
-            container.innerHTML = `<p class="text-xs text-indigo-400 animate-pulse text-center py-6">Memproses permintaan ke server...</p>`;
-
+            container.innerHTML = `<div class="flex flex-col items-center justify-center min-h-[170px]"><div class="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/10 grid place-items-center mb-4"><i class="fa-solid fa-circle-notch fa-spin text-indigo-400"></i></div><p class="text-xs text-slate-300 font-bold">Memproses request...</p><p class="text-[10px] text-slate-600 mt-1">Menunggu response dari server</p></div>`;
             try {
                 const res = await fetch(endpointUrl);
                 const data = await res.json();
@@ -447,31 +815,38 @@
             }
         }
 
-        async function executeTempmail() {
+        function executeTempmail() {
             executeApi('tempmail');
         }
 
-        function copyActiveEndpoint() {
-            const url = getConstructedUrl();
-            navigator.clipboard.writeText(url);
-            alert("Endpoint URL berhasil disalin!");
+        async function copyText(text) {
+            try {
+                await navigator.clipboard.writeText(text);
+                showToast('Berhasil disalin ke clipboard.');
+            } catch {
+                showToast('Clipboard tidak tersedia.', 'error');
+            }
         }
 
-        function copyResultJson() {
+        async function copyActiveEndpoint() {
+            await copyText(getConstructedUrl());
+        }
+
+        async function copyResultJson() {
             if (!lastApiResponse) {
-                alert("Belum ada data response untuk disalin!");
+                showToast('Belum ada response untuk disalin.', 'error');
                 return;
             }
-            navigator.clipboard.writeText(JSON.stringify(lastApiResponse, null, 2));
-            alert("Response JSON berhasil disalin ke clipboard!");
+            await copyText(JSON.stringify(lastApiResponse, null, 2));
         }
 
-        function copyBaseUrl() {
-            navigator.clipboard.writeText(baseUrl);
-            alert("Base URL berhasil disalin!");
+        async function copyBaseUrl() {
+            await copyText(baseUrl);
         }
 
-        // Initialize default
+        updateDateTime();
+        setInterval(updateDateTime, 1000);
+        setDynamicGreeting();
         switchTab('mediafire');
     </script>
 </body>
