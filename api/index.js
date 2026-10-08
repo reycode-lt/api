@@ -2,9 +2,9 @@ import { mediafire } from '../lib/mediafire.js';
 import { scrapeTikTok } from '../lib/tiktok.js';
 import { findAmPreset } from '../lib/amfinder.js';
 import tempmail from '../lib/tempmail.js';
+import { createFreeFireGuest } from '../lib/createguestff.js';
 
 export default async function handler(req, res) {
-    // Set header CORS agar API bisa diakses secara publik
     res.setHeader('Access-Control-Allow-Origin', '*');
     res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -16,44 +16,37 @@ export default async function handler(req, res) {
     const path = req.url || '';
     const query = req.query || {};
     const body = req.body || {};
-    
-    // Gabungkan parameter dari query string atau body POST
     const params = { ...query, ...body };
     const urlParam = params.url || params.link;
 
     try {
-        // Route: /tools/tempmail (Temporary Mail API)
+        // Route: /tools/ffguest (Free Fire Guest Account Generator)
+        if (path.includes('/tools/ffguest')) {
+            const count = parseInt(params.count || params.jumlah || 1);
+            const result = await createFreeFireGuest(count);
+            return res.status(200).json({
+                status: true,
+                creator: 'ReyCode',
+                result
+            });
+        }
+
+        // Route: /tools/tempmail
         if (path.includes('/tools/tempmail')) {
             const action = String(params.action || '').toLowerCase();
 
             if (action === 'create') {
-                const data = await tempmail.createTempEmail(
-                    params.username || params.mailbox || params.name
-                );
-                return res.status(200).json({
-                    status: true,
-                    creator: 'ReyCode',
-                    provider: 'akunlama.com',
-                    data
-                });
+                const data = await tempmail.createTempEmail(params.username || params.mailbox || params.name);
+                return res.status(200).json({ status: true, creator: 'ReyCode', provider: 'akunlama.com', data });
             }
 
             if (action === 'inbox' || action === 'check') {
                 const username = params.username || params.mailbox || params.recipient;
                 if (!username) {
-                    return res.status(400).json({
-                        status: false,
-                        message: "Parameter 'username' wajib diisi. Contoh: /tools/tempmail?action=inbox&username=namakamu"
-                    });
+                    return res.status(400).json({ status: false, message: "Parameter 'username' wajib diisi." });
                 }
-
                 const data = await tempmail.getInbox(username);
-                return res.status(200).json({
-                    status: true,
-                    creator: 'ReyCode',
-                    provider: 'akunlama.com',
-                    data
-                });
+                return res.status(200).json({ status: true, creator: 'ReyCode', provider: 'akunlama.com', data });
             }
 
             if (action === 'message') {
@@ -62,78 +55,49 @@ export default async function handler(req, res) {
                 const region = params.region || 'us';
 
                 if (!username || !id) {
-                    return res.status(400).json({
-                        status: false,
-                        message: "Parameter 'username' dan 'id' (messageId) wajib diisi."
-                    });
+                    return res.status(400).json({ status: false, message: "Parameter 'username' dan 'id' wajib diisi." });
                 }
-
                 const data = await tempmail.getMessage(username, id, region);
-                return res.status(200).json({
-                    status: true,
-                    creator: 'ReyCode',
-                    provider: 'akunlama.com',
-                    data
-                });
+                return res.status(200).json({ status: true, creator: 'ReyCode', provider: 'akunlama.com', data });
             }
 
-            // Info panduan penggunaan jika action tidak diisi atau salah
             return res.status(200).json({
                 status: true,
                 message: "Monika Labs TempMail API is active!",
                 endpoints: {
                     create: "/tools/tempmail?action=create",
                     inbox: "/tools/tempmail?action=inbox&username=USERNAME",
-                    message: "/tools/tempmail?action=message&username=USERNAME&id=MESSAGE_ID&region=us"
-                },
-                creator: "ReyCode"
+                    message: "/tools/tempmail?action=message&username=USERNAME&id=MESSAGE_ID"
+                }
             });
         }
 
-        // Route: /download/tiktok (Downloader TikTok)
+        // Route: /download/tiktok
         if (path.includes('/download/tiktok')) {
-            if (!urlParam) {
-                return res.status(400).json({
-                    status: false,
-                    message: "Parameter 'url' TikTok wajib disertakan. Contoh: /download/tiktok?url=<link_tiktok>"
-                });
-            }
-
+            if (!urlParam) return res.status(400).json({ status: false, message: "Parameter 'url' TikTok wajib disertakan." });
             const result = await scrapeTikTok(urlParam);
             return res.status(200).json({ status: true, result });
         }
 
-        // Route: /download/mediafire (Downloader MediaFire)
+        // Route: /download/mediafire
         if (path.includes('/download/mediafire')) {
-            if (!urlParam) {
-                return res.status(400).json({
-                    status: false,
-                    message: "Parameter 'url' MediaFire wajib disertakan. Contoh: /download/mediafire?url=<link_mediafire>"
-                });
-            }
-
+            if (!urlParam) return res.status(400).json({ status: false, message: "Parameter 'url' MediaFire wajib disertakan." });
             const result = await mediafire(urlParam);
             return res.status(200).json({ status: true, result });
         }
 
-        // Route: /tools/amfinder (Pencari Preset AM dari Komentar TikTok)
+        // Route: /tools/amfinder
         if (path.includes('/tools/amfinder')) {
-            if (!urlParam) {
-                return res.status(400).json({
-                    status: false,
-                    message: "Parameter 'url' TikTok wajib disertakan. Contoh: /tools/amfinder?url=<link_tiktok>"
-                });
-            }
-
+            if (!urlParam) return res.status(400).json({ status: false, message: "Parameter 'url' TikTok wajib disertakan." });
             const result = await findAmPreset(urlParam);
             return res.status(200).json({ status: true, result });
         }
 
-        // Default response / Root API
         return res.status(200).json({
             status: true,
             message: "Monika Labs API is active!",
             endpoints: {
+                ffguest: "/tools/ffguest?count=1 (max 10)",
                 tempmail: "/tools/tempmail?action=create / inbox / message",
                 tiktok: "/download/tiktok?url=<tiktok_url>",
                 mediafire: "/download/mediafire?url=<mediafire_url>",
