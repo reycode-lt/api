@@ -415,10 +415,31 @@
                         </div>
                     </div>
 
-                    <div class="folder open" id="folder-download">
+                    <!-- Folder AI -->
+                    <div class="folder open" id="folder-ai">
+                        <div onclick="toggleFolder('folder-ai')" class="folder-header flex items-center justify-between px-3 py-2.5 rounded-2xl bg-slate-900/60 border border-slate-800">
+                            <div class="flex items-center gap-2.5">
+                                <i class="fa-solid fa-folder-open text-emerald-400 text-xs"></i>
+                                <span class="text-xs font-bold text-slate-200">/ai</span>
+                            </div>
+                            <i class="folder-arrow fa-solid fa-chevron-right text-[10px] text-slate-400"></i>
+                        </div>
+                        <div class="folder-content space-y-1.5 pl-2 pt-2">
+                            <button onclick="switchTab('txt2img')" id="btn-txt2img" class="tab-btn tool-btn active w-full text-left px-3 py-2.5 rounded-2xl flex items-center gap-3">
+                                <span class="tool-icon"><i class="fa-solid fa-wand-magic text-xs"></i></span>
+                                <span class="flex-1 min-w-0">
+                                    <span class="block text-xs font-bold truncate">AI Text to Image</span>
+                                    <code class="block text-[9px] opacity-60 font-mono mt-0.5">/ai/txt2img</code>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Folder Download -->
+                    <div class="folder" id="folder-download">
                         <div onclick="toggleFolder('folder-download')" class="folder-header flex items-center justify-between px-3 py-2.5 rounded-2xl bg-slate-900/60 border border-slate-800">
                             <div class="flex items-center gap-2.5">
-                                <i class="fa-solid fa-folder-open text-indigo-400 text-xs"></i>
+                                <i class="fa-solid fa-folder text-indigo-400 text-xs"></i>
                                 <span class="text-xs font-bold text-slate-200">/download</span>
                             </div>
                             <i class="folder-arrow fa-solid fa-chevron-right text-[10px] text-slate-400"></i>
@@ -431,11 +452,11 @@
                                     <code class="block text-[9px] text-slate-500 font-mono mt-0.5">/download/aio</code>
                                 </span>
                             </button>
-                            <button onclick="switchTab('mediafire')" id="btn-mediafire" class="tab-btn tool-btn active w-full text-left px-3 py-2.5 rounded-2xl flex items-center gap-3">
+                            <button onclick="switchTab('mediafire')" id="btn-mediafire" class="tab-btn tool-btn w-full text-left px-3 py-2.5 rounded-2xl flex items-center gap-3 text-slate-300">
                                 <span class="tool-icon"><i class="fa-solid fa-file-arrow-down text-xs"></i></span>
                                 <span class="flex-1 min-w-0">
                                     <span class="block text-xs font-bold truncate">MediaFire Downloader</span>
-                                    <code class="block text-[9px] opacity-60 font-mono mt-0.5">/download/mediafire</code>
+                                    <code class="block text-[9px] text-slate-500 font-mono mt-0.5">/download/mediafire</code>
                                 </span>
                             </button>
                             <button onclick="switchTab('tiktok')" id="btn-tiktok" class="tab-btn tool-btn w-full text-left px-3 py-2.5 rounded-2xl flex items-center gap-3 text-slate-300">
@@ -448,6 +469,7 @@
                         </div>
                     </div>
 
+                    <!-- Folder Tools -->
                     <div class="folder" id="folder-tools">
                         <div onclick="toggleFolder('folder-tools')" class="folder-header flex items-center justify-between px-3 py-2.5 rounded-2xl bg-slate-900/60 border border-slate-800">
                             <div class="flex items-center gap-2.5">
@@ -508,7 +530,7 @@
 
                     <div class="code-box px-4 py-3.5 flex items-center gap-3 overflow-hidden">
                         <span class="text-indigo-400 flex-shrink-0"><i class="fa-solid fa-terminal text-xs"></i></span>
-                        <span id="active-url-preview" class="text-[11px] text-emerald-400 font-mono whitespace-nowrap overflow-x-auto">https://api.monikalabs.web.id/download/mediafire</span>
+                        <span id="active-url-preview" class="text-[11px] text-emerald-400 font-mono whitespace-nowrap overflow-x-auto">https://api.monikalabs.web.id/ai/txt2img</span>
                     </div>
 
                     <div class="mt-5">
@@ -565,7 +587,7 @@
     <div id="toast-container"></div>
 
     <script>
-        let currentTool = 'mediafire';
+        let currentTool = 'txt2img';
         let currentSnippetType = 'curl';
         let lastApiResponse = null;
         const baseUrl = window.location.origin;
@@ -604,6 +626,32 @@
         }
 
         const forms = {
+            txt2img: {
+                endpoint: '/ai/txt2img',
+                html: `
+                    <div class="flex items-start gap-4 mb-6">
+                        <div class="w-11 h-11 rounded-2xl bg-emerald-500/10 border border-emerald-500/10 grid place-items-center flex-shrink-0"><i class="fa-solid fa-wand-magic text-emerald-400"></i></div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h3 class="text-lg font-extrabold text-white">AI Text to Image</h3>
+                                <code class="text-[9px] text-emerald-300 bg-emerald-500/10 px-2 py-1 rounded-lg">GET</code>
+                            </div>
+                            <p class="text-[11px] text-slate-500 mt-1">Generate gambar berkualitas tinggi menggunakan AI Generator.</p>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div class="space-y-2">
+                            <label class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Prompt</label>
+                            <input type="text" id="input-txt2img-prompt" oninput="updateLiveUrl()" placeholder="1girl, masterpiece, cinematic lighting" class="custom-input">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Negative Prompt (Opsional)</label>
+                            <input type="text" id="input-txt2img-negative" oninput="updateLiveUrl()" placeholder="(worst quality, low quality:1.4)" class="custom-input">
+                        </div>
+                    </div>
+                    <button onclick="executeTxt2Img()" class="modern-btn primary-btn w-full mt-4 rounded-2xl py-3.5 text-xs font-extrabold text-white"><i class="fa-solid fa-play mr-2"></i>Generate AI Image</button>
+                `
+            },
             aio: {
                 endpoint: '/download/aio',
                 html: `
@@ -804,7 +852,12 @@
         function getConstructedUrl() {
             const endpoint = forms[currentTool].endpoint;
             let queryStr = '';
-            if (currentTool === 'aio' || currentTool === 'mediafire' || currentTool === 'tiktok' || currentTool === 'amfinder') {
+            if (currentTool === 'txt2img') {
+                const prompt = document.getElementById('input-txt2img-prompt')?.value.trim() || '';
+                const negative = document.getElementById('input-txt2img-negative')?.value.trim() || '';
+                queryStr = `?prompt=${encodeURIComponent(prompt)}`;
+                if (negative) queryStr += `&negative=${encodeURIComponent(negative)}`;
+            } else if (currentTool === 'aio' || currentTool === 'mediafire' || currentTool === 'tiktok' || currentTool === 'amfinder') {
                 const val = document.getElementById('input-url')?.value.trim() || '';
                 if (val) queryStr = `?url=${encodeURIComponent(val)}`;
             } else if (currentTool === 'ffguest') {
@@ -866,7 +919,10 @@
             }
 
             let html = '';
-            if (currentTool === 'tiktok' && data.result) {
+            if (currentTool === 'txt2img' && data.result) {
+                const r = data.result;
+                html += `<div class="rounded-2xl p-4 bg-slate-900/65 border border-slate-800 space-y-3 text-center"><p class="text-xs font-bold text-slate-200">Hasil AI Text-to-Image:</p><div class="bg-slate-950 p-2 rounded-xl border border-slate-800 inline-block"><img src="${escapeHtml(r.result_image_url)}" class="max-h-[350px] w-auto rounded-lg mx-auto" alt="AI Image Result"></div><a href="${escapeHtml(r.result_image_url)}" target="_blank" download="ai-image.png" class="modern-btn primary-btn block text-center w-full py-2.5 rounded-xl text-[10px] font-extrabold text-white">Buka / Download Gambar</a></div>`;
+            } else if (currentTool === 'tiktok' && data.result) {
                 const res = data.result;
                 html += `<div class="space-y-4"><div class="rounded-2xl p-4 bg-slate-900/65 border border-slate-800 flex items-center gap-3">${res.author?.avatar ? `<img src="${escapeHtml(res.author.avatar)}" class="w-11 h-11 rounded-full border border-slate-700 object-cover">` : `<div class="w-11 h-11 rounded-full bg-indigo-500/10 grid place-items-center"><i class="fa-solid fa-user text-indigo-400"></i></div>`}<div class="min-w-0"><h4 class="font-bold text-sm text-slate-200 truncate">${escapeHtml(res.author?.nickname || 'TikTok User')}</h4><p class="text-[10px] text-slate-500 truncate">@${escapeHtml(res.author?.fullname || '-')}</p></div></div><div class="text-xs text-slate-300 leading-relaxed">${escapeHtml(res.title || '-')}</div>${res.video_url ? `<div class="rounded-2xl overflow-hidden border border-slate-800 bg-black flex justify-center"><video src="${escapeHtml(res.video_url)}" controls playsinline class="max-h-[360px] w-auto max-w-full"></video></div><div class="grid grid-cols-1 sm:grid-cols-2 gap-2"><a href="${escapeHtml(res.video_url)}" target="_blank" rel="noopener noreferrer" class="modern-btn primary-btn text-center py-3 rounded-xl text-[10px] font-extrabold text-white"><i class="fa-solid fa-download mr-1.5"></i>Download Video</a>${res.audio_url ? `<a href="${escapeHtml(res.audio_url)}" target="_blank" rel="noopener noreferrer" class="modern-btn secondary-btn text-center py-3 rounded-xl text-[10px] font-extrabold text-slate-200"><i class="fa-solid fa-music mr-1.5"></i>Download Audio</a>` : ''}</div>` : ''}</div>`;
             } else if (currentTool === 'mediafire' && data.result) {
@@ -907,6 +963,10 @@
             executeApi('amgen');
         }
 
+        function executeTxt2Img() {
+            executeApi('txt2img');
+        }
+
         async function copyText(text) {
             try {
                 await navigator.clipboard.writeText(text);
@@ -935,7 +995,7 @@
         updateDateTime();
         setInterval(updateDateTime, 1000);
         setDynamicGreeting();
-        switchTab('mediafire');
+        switchTab('txt2img');
     </script>
 </body>
 </html>
