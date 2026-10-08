@@ -22,8 +22,8 @@ export default async function handler(req, res) {
     const urlParam = params.url || params.link;
 
     try {
-        // Route: /tools/faketele (Fake Telegram Profile Generator)
-        if (path.includes('/tools/faketele')) {
+        // Route: /canvas/faketele (Fake Telegram Profile Generator)
+        if (path.includes('/canvas/faketele')) {
             const name = params.name || params.nama;
             const phone = params.phone || params.ponsel;
             const bio = params.bio;
@@ -134,7 +134,7 @@ export default async function handler(req, res) {
             status: true,
             message: "Monika Labs API is active!",
             endpoints: {
-                faketele: "/tools/faketele?name=...&phone=...&bio=...&username=...&avatar=...",
+                faketele: "/canvas/faketele?name=...&phone=...&bio=...&username=...&avatar=...",
                 aio: "/download/aio?url=<target_url>",
                 tiktok: "/download/tiktok?url=<tiktok_url>",
                 mediafire: "/download/mediafire?url=<mediafire_url>",
