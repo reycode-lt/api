@@ -1,6 +1,7 @@
 {
   "rewrites": [
-    { "source": "/tools/amfinder", "destination": "/api/index" },
-    { "source": "/download/mediafire", "destination": "/api/index" }
+    { "source": "/download/tiktok", "destination": "/api/index" },
+    { "source": "/download/mediafire", "destination": "/api/index" },
+    { "source": "/tools/amfinder", "destination": "/api/index" }
   ]
 }
