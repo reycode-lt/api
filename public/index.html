@@ -3,87 +3,156 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Monika Labs API Dashboard & Tester</title>
+    <title>Monika Labs API Dashboard & Documentation</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen font-sans selection:bg-indigo-500 selection:text-white">
 
-    <!-- Header -->
-    <header class="border-b border-slate-800 bg-slate-900/50 backdrop-blur sticky top-0 z-50">
-        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+    <!-- Header / Welcome & Base URL Banner -->
+    <header class="border-b border-slate-800 bg-slate-900/60 backdrop-blur sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
             <div class="flex items-center space-x-3">
-                <div class="bg-indigo-600 p-2.5 rounded-xl text-white shadow-lg shadow-indigo-500/30">
+                <div class="bg-indigo-600 p-3 rounded-xl text-white shadow-lg shadow-indigo-500/30">
                     <i class="fa-solid fa-terminal text-xl"></i>
                 </div>
                 <div>
-                    <h1 class="font-bold text-lg tracking-wide">Monika Labs API</h1>
-                    <p class="text-xs text-slate-400">Professional Utility & Downloader Services</p>
+                    <h1 class="font-bold text-lg tracking-wide">Monika Labs API Dashboard</h1>
+                    <p class="text-xs text-slate-400">Selamat datang, jelajahi dan uji coba endpoint API publik kami secara langsung.</p>
                 </div>
             </div>
-            <div class="flex items-center space-x-2">
-                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
-                    <span class="w-1.5 h-1.5 mr-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-                    API Active
-                </span>
+            
+            <!-- Base URL Box -->
+            <div class="bg-slate-950 border border-slate-800 px-4 py-2 rounded-xl flex items-center space-x-3 shadow-inner">
+                <span class="text-xs text-slate-400 font-medium">Base URL:</span>
+                <code id="base-url-text" class="text-xs font-mono text-indigo-400">https://api.monikalabs.web.id</code>
+                <button onclick="copyBaseUrl()" class="text-xs text-slate-400 hover:text-white transition" title="Salin Base URL">
+                    <i class="fa-regular fa-copy"></i>
+                </button>
             </div>
         </div>
     </header>
 
     <!-- Main Container -->
-    <main class="max-w-6xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <main class="max-w-7xl mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-12 gap-8">
         
-        <!-- Sidebar Menu / Tool Selector -->
-        <div class="lg:col-span-1 space-y-3">
-            <h2 class="text-xs font-semibold text-slate-400 uppercase tracking-wider px-2 mb-2">Pilih Tools API</h2>
+        <!-- Sidebar Menu / Grouped Folders -->
+        <div class="lg:col-span-4 space-y-6">
             
-            <button onclick="switchTab('mediafire')" id="btn-mediafire" class="tab-btn w-full text-left px-4 py-3 rounded-xl transition flex items-center space-x-3 bg-indigo-600 text-white shadow-lg shadow-indigo-600/20">
-                <i class="fa-solid fa-file-arrow-down w-5 text-center"></i>
-                <span class="font-medium text-sm">MediaFire Downloader</span>
-            </button>
+            <!-- Folder: /download -->
+            <div class="space-y-2">
+                <div class="flex items-center space-x-2 px-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                    <i class="fa-solid fa-folder-open text-indigo-400"></i>
+                    <span>/download</span>
+                </div>
+                <div class="space-y-1.5 pl-2">
+                    <button onclick="switchTab('mediafire')" id="btn-mediafire" class="tab-btn w-full text-left px-3.5 py-2.5 rounded-xl transition flex items-center justify-between bg-indigo-600 text-white shadow-lg shadow-indigo-600/20 text-sm font-medium">
+                        <span class="flex items-center space-x-2.5">
+                            <i class="fa-solid fa-file-arrow-down w-4"></i>
+                            <span>MediaFire Downloader</span>
+                        </span>
+                        <code class="text-[10px] bg-indigo-700/60 px-1.5 py-0.5 rounded font-mono">/download/mediafire</code>
+                    </button>
 
-            <button onclick="switchTab('tiktok')" id="btn-tiktok" class="tab-btn w-full text-left px-4 py-3 rounded-xl transition flex items-center space-x-3 bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">
-                <i class="fa-brands fa-tiktok w-5 text-center"></i>
-                <span class="font-medium text-sm">TikTok Downloader</span>
-            </button>
-
-            <button onclick="switchTab('amfinder')" id="btn-amfinder" class="tab-btn w-full text-left px-4 py-3 rounded-xl transition flex items-center space-x-3 bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">
-                <i class="fa-solid fa-wand-magic-sparkles w-5 text-center"></i>
-                <span class="font-medium text-sm">AM Preset Finder</span>
-            </button>
-
-            <button onclick="switchTab('tempmail')" id="btn-tempmail" class="tab-btn w-full text-left px-4 py-3 rounded-xl transition flex items-center space-x-3 bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">
-                <i class="fa-solid fa-envelope-open-text w-5 text-center"></i>
-                <span class="font-medium text-sm">Temporary Mail</span>
-            </button>
-
-            <button onclick="switchTab('ffguest')" id="btn-ffguest" class="tab-btn w-full text-left px-4 py-3 rounded-xl transition flex items-center space-x-3 bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800">
-                <i class="fa-solid fa-gamepad w-5 text-center"></i>
-                <span class="font-medium text-sm">Free Fire Guest Gen</span>
-            </button>
-        </div>
-
-        <!-- Testing Area & Output -->
-        <div class="lg:col-span-2 space-y-6">
-            
-            <!-- Dynamic Form Card -->
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
-                <div id="form-container">
-                    <!-- Konten form akan dimuat dinamis oleh JavaScript -->
+                    <button onclick="switchTab('tiktok')" id="btn-tiktok" class="tab-btn w-full text-left px-3.5 py-2.5 rounded-xl transition flex items-center justify-between bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800 text-sm font-medium">
+                        <span class="flex items-center space-x-2.5">
+                            <i class="fa-brands fa-tiktok w-4"></i>
+                            <span>TikTok Downloader</span>
+                        </span>
+                        <code class="text-[10px] bg-slate-800 px-1.5 py-0.5 rounded font-mono text-slate-400">/download/tiktok</code>
+                    </button>
                 </div>
             </div>
 
-            <!-- Result Card -->
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
-                <div class="flex justify-between items-center mb-3">
-                    <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">Response JSON</h3>
-                    <button onclick="copyResult()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700 transition flex items-center space-x-1.5">
-                        <i class="fa-regular fa-copy"></i>
-                        <span>Salin JSON</span>
+            <!-- Folder: /tools -->
+            <div class="space-y-2">
+                <div class="flex items-center space-x-2 px-2 text-xs font-semibold text-slate-400 uppercase tracking-wider">
+                    <i class="fa-solid fa-folder-open text-indigo-400"></i>
+                    <span>/tools</span>
+                </div>
+                <div class="space-y-1.5 pl-2">
+                    <button onclick="switchTab('amfinder')" id="btn-amfinder" class="tab-btn w-full text-left px-3.5 py-2.5 rounded-xl transition flex items-center justify-between bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800 text-sm font-medium">
+                        <span class="flex items-center space-x-2.5">
+                            <i class="fa-solid fa-wand-magic-sparkles w-4"></i>
+                            <span>AM Preset Finder</span>
+                        </span>
+                        <code class="text-[10px] bg-slate-800 px-1.5 py-0.5 rounded font-mono text-slate-400">/tools/amfinder</code>
+                    </button>
+
+                    <button onclick="switchTab('tempmail')" id="btn-tempmail" class="tab-btn w-full text-left px-3.5 py-2.5 rounded-xl transition flex items-center justify-between bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800 text-sm font-medium">
+                        <span class="flex items-center space-x-2.5">
+                            <i class="fa-solid fa-envelope-open-text w-4"></i>
+                            <span>Temporary Mail</span>
+                        </span>
+                        <code class="text-[10px] bg-slate-800 px-1.5 py-0.5 rounded font-mono text-slate-400">/tools/tempmail</code>
+                    </button>
+
+                    <button onclick="switchTab('ffguest')" id="btn-ffguest" class="tab-btn w-full text-left px-3.5 py-2.5 rounded-xl transition flex items-center justify-between bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800 text-sm font-medium">
+                        <span class="flex items-center space-x-2.5">
+                            <i class="fa-solid fa-gamepad w-4"></i>
+                            <span>Free Fire Guest Gen</span>
+                        </span>
+                        <code class="text-[10px] bg-slate-800 px-1.5 py-0.5 rounded font-mono text-slate-400">/tools/ffguest</code>
                     </button>
                 </div>
-                <div class="relative bg-slate-950 rounded-xl border border-slate-800 p-4 max-h-[400px] overflow-auto">
-                    <pre id="json-output" class="text-xs text-indigo-300 font-mono">Pilih tool di sebelah kiri, lalu jalankan tes untuk melihat hasilnya di sini...</pre>
+            </div>
+
+        </div>
+
+        <!-- Testing Area & Output -->
+        <div class="lg:col-span-8 space-y-6">
+            
+            <!-- Dynamic Form Card -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+                <div id="form-container"></div>
+            </div>
+
+            <!-- Code Snippet / Request Examples -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Contoh Kode Request</h3>
+                    <div class="flex space-x-2 bg-slate-950 p-1 rounded-lg border border-slate-800">
+                        <button onclick="switchSnippet('curl')" id="btn-snippet-curl" class="text-xs px-3 py-1 rounded bg-indigo-600 text-white font-medium transition">cURL</button>
+                        <button onclick="switchSnippet('node')" id="btn-snippet-node" class="text-xs px-3 py-1 rounded text-slate-400 hover:text-white font-medium transition">Node.js</button>
+                    </div>
+                </div>
+                <div class="bg-slate-950 rounded-xl border border-slate-800 p-4 font-mono text-xs text-indigo-300 overflow-x-auto">
+                    <pre id="code-snippet">Pilih tool untuk melihat contoh kode...</pre>
+                </div>
+            </div>
+
+            <!-- Response Result Card (Card View vs Raw JSON) -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
+                    <div class="flex items-center space-x-2">
+                        <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Response Output</h3>
+                        <span id="response-status" class="hidden text-[10px] px-2 py-0.5 rounded-full font-medium"></span>
+                    </div>
+                    
+                    <div class="flex items-center space-x-3">
+                        <!-- Mode Toggle: Card View vs Raw JSON -->
+                        <div class="flex space-x-1 bg-slate-950 p-1 rounded-lg border border-slate-800">
+                            <button onclick="switchViewMode('card')" id="btn-mode-card" class="text-xs px-3 py-1 rounded bg-indigo-600 text-white font-medium transition flex items-center space-x-1">
+                                <i class="fa-solid fa-id-card"></i><span>Card View</span>
+                            </button>
+                            <button onclick="switchViewMode('raw')" id="btn-mode-raw" class="text-xs px-3 py-1 rounded text-slate-400 hover:text-white font-medium transition flex items-center space-x-1">
+                                <i class="fa-solid fa-code"></i><span>Raw JSON</span>
+                            </button>
+                        </div>
+
+                        <button onclick="copyResult()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700 transition flex items-center space-x-1.5">
+                            <i class="fa-regular fa-copy"></i>
+                            <span>Salin</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Output Container -->
+                <div class="bg-slate-950 rounded-xl border border-slate-800 p-4 min-h-[160px] max-h-[450px] overflow-auto">
+                    <div id="output-card-view" class="space-y-3 text-sm">
+                        <p class="text-xs text-slate-500 italic">Hasil uji coba dalam bentuk card interaktif akan muncul di sini...</p>
+                    </div>
+                    <pre id="output-raw-view" class="hidden text-xs text-indigo-300 font-mono"></pre>
                 </div>
             </div>
 
@@ -91,52 +160,60 @@
     </main>
 
     <!-- Footer -->
-    <footer class="max-w-6xl mx-auto px-4 py-8 text-center text-xs text-slate-500 border-t border-slate-900 mt-12">
+    <footer class="max-w-7xl mx-auto px-4 py-8 text-center text-xs text-slate-500 border-t border-slate-900 mt-12">
         <p>Built with ❤️ by ReyCode &bull; Monika Labs &copy; 2026</p>
     </footer>
 
     <!-- Script Logic -->
     <script>
         let currentTool = 'mediafire';
+        let currentSnippetType = 'curl';
+        let currentViewMode = 'card';
+        let lastApiResponse = null;
+        const baseUrl = window.location.origin;
 
         const forms = {
-            mediafire: `
-                <h3 class="text-lg font-bold mb-1 flex items-center space-x-2"><i class="fa-solid fa-file-arrow-down text-indigo-400"></i><span>MediaFire Downloader</span></h3>
-                <p class="text-xs text-slate-400 mb-4">Ambil link unduhan file langsung dari URL MediaFire.</p>
-                <div class="space-y-4">
+            mediafire: {
+                title: "MediaFire Downloader",
+                endpoint: "/download/mediafire",
+                desc: "Ambil link unduhan file langsung dari URL MediaFire.",
+                html: `
                     <div>
                         <label class="block text-xs font-medium text-slate-300 mb-1">URL MediaFire</label>
                         <input type="text" id="input-url" placeholder="https://www.mediafire.com/file/..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
                     </div>
                     <button onclick="executeApi('mediafire')" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2.5 rounded-xl transition shadow-lg shadow-indigo-600/20 text-sm">Jalankan Test</button>
-                </div>
-            `,
-            tiktok: `
-                <h3 class="text-lg font-bold mb-1 flex items-center space-x-2"><i class="fa-brands fa-tiktok text-indigo-400"></i><span>TikTok Downloader</span></h3>
-                <p class="text-xs text-slate-400 mb-4">Download video, foto, atau audio TikTok tanpa watermark.</p>
-                <div class="space-y-4">
+                `
+            },
+            tiktok: {
+                title: "TikTok Downloader",
+                endpoint: "/download/tiktok",
+                desc: "Download video, foto, atau audio TikTok tanpa watermark.",
+                html: `
                     <div>
                         <label class="block text-xs font-medium text-slate-300 mb-1">URL TikTok</label>
                         <input type="text" id="input-url" placeholder="https://www.tiktok.com/@user/video/..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
                     </div>
                     <button onclick="executeApi('tiktok')" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2.5 rounded-xl transition shadow-lg shadow-indigo-600/20 text-sm">Jalankan Test</button>
-                </div>
-            `,
-            amfinder: `
-                <h3 class="text-lg font-bold mb-1 flex items-center space-x-2"><i class="fa-solid fa-wand-magic-sparkles text-indigo-400"></i><span>AM Preset Finder</span></h3>
-                <p class="text-xs text-slate-400 mb-4">Cari komentar di TikTok yang berisi tautan preset Alight Motion.</p>
-                <div class="space-y-4">
+                `
+            },
+            amfinder: {
+                title: "AM Preset Finder",
+                endpoint: "/tools/amfinder",
+                desc: "Cari komentar di TikTok yang berisi tautan preset Alight Motion.",
+                html: `
                     <div>
                         <label class="block text-xs font-medium text-slate-300 mb-1">URL TikTok Target</label>
                         <input type="text" id="input-url" placeholder="https://www.tiktok.com/@user/video/..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
                     </div>
                     <button onclick="executeApi('amfinder')" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2.5 rounded-xl transition shadow-lg shadow-indigo-600/20 text-sm">Cari Preset</button>
-                </div>
-            `,
-            tempmail: `
-                <h3 class="text-lg font-bold mb-1 flex items-center space-x-2"><i class="fa-solid fa-envelope-open-text text-indigo-400"></i><span>Temporary Mail API</span></h3>
-                <p class="text-xs text-slate-400 mb-4">Buat email sementara atau cek inbox pesan masuk (@akunlama.com).</p>
-                <div class="space-y-4">
+                `
+            },
+            tempmail: {
+                title: "Temporary Mail",
+                endpoint: "/tools/tempmail",
+                desc: "Buat email sementara atau cek inbox pesan masuk (@akunlama.com).",
+                html: `
                     <div>
                         <label class="block text-xs font-medium text-slate-300 mb-1">Pilih Action</label>
                         <select id="input-action" onchange="toggleTempmailFields()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
@@ -154,28 +231,42 @@
                         <input type="text" id="input-messageid" placeholder="ID pesan dari inbox" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
                     </div>
                     <button onclick="executeTempmail()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2.5 rounded-xl transition shadow-lg shadow-indigo-600/20 text-sm">Proses Mail</button>
-                </div>
-            `,
-            ffguest: `
-                <h3 class="text-lg font-bold mb-1 flex items-center space-x-2"><i class="fa-solid fa-gamepad text-indigo-400"></i><span>Free Fire Guest Generator</span></h3>
-                <p class="text-xs text-slate-400 mb-4">Generate akun guest Free Fire otomatis (Maksimal 10 akun).</p>
-                <div class="space-y-4">
+                `
+            },
+            ffguest: {
+                title: "Free Fire Guest Generator",
+                endpoint: "/tools/ffguest",
+                desc: "Generate akun guest Free Fire otomatis (Maksimal 10 akun).",
+                html: `
                     <div>
                         <label class="block text-xs font-medium text-slate-300 mb-1">Jumlah Akun (1 - 10)</label>
                         <input type="number" id="input-count" value="1" min="1" max="10" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
                     </div>
                     <button onclick="executeApi('ffguest')" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2.5 rounded-xl transition shadow-lg shadow-indigo-600/20 text-sm">Generate Akun</button>
-                </div>
-            `
+                `
+            }
         };
 
         function switchTab(tool) {
             currentTool = tool;
             document.querySelectorAll('.tab-btn').forEach(btn => {
-                btn.className = "tab-btn w-full text-left px-4 py-3 rounded-xl transition flex items-center space-x-3 bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800";
+                btn.className = "tab-btn w-full text-left px-3.5 py-2.5 rounded-xl transition flex items-center justify-between bg-slate-900 text-slate-300 hover:bg-slate-800 border border-slate-800 text-sm font-medium";
             });
-            document.getElementById(`btn-${tool}`).className = "tab-btn w-full text-left px-4 py-3 rounded-xl transition flex items-center space-x-3 bg-indigo-600 text-white shadow-lg shadow-indigo-600/20";
-            document.getElementById('form-container').innerHTML = forms[tool];
+            document.getElementById(`btn-${tool}`).className = "tab-btn w-full text-left px-3.5 py-2.5 rounded-xl transition flex items-center justify-between bg-indigo-600 text-white shadow-lg shadow-indigo-600/20 text-sm font-medium";
+            
+            const currentForm = forms[tool];
+            document.getElementById('form-container').innerHTML = `
+                <div class="flex justify-between items-start mb-2">
+                    <div>
+                        <h3 class="text-lg font-bold">${currentForm.title}</h3>
+                        <p class="text-xs text-slate-400">${currentForm.desc}</p>
+                    </div>
+                    <code class="text-xs bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-800 font-mono text-indigo-400">${currentForm.endpoint}</code>
+                </div>
+                <div class="space-y-4 mt-4">${currentForm.html}</div>
+            `;
+            
+            updateCodeSnippet();
         }
 
         function toggleTempmailFields() {
@@ -195,10 +286,84 @@
             }
         }
 
+        function switchSnippet(type) {
+            currentSnippetType = type;
+            document.getElementById('btn-snippet-curl').className = type === 'curl' ? 'text-xs px-3 py-1 rounded bg-indigo-600 text-white font-medium transition' : 'text-xs px-3 py-1 rounded text-slate-400 hover:text-white font-medium transition';
+            document.getElementById('btn-snippet-node').className = type === 'node' ? 'text-xs px-3 py-1 rounded bg-indigo-600 text-white font-medium transition' : 'text-xs px-3 py-1 rounded text-slate-400 hover:text-white font-medium transition';
+            updateCodeSnippet();
+        }
+
+        function updateCodeSnippet() {
+            const endpoint = forms[currentTool].endpoint;
+            let fullUrl = `${baseUrl}${endpoint}`;
+            
+            if (currentTool === 'mediafire' || currentTool === 'tiktok' || currentTool === 'amfinder') {
+                fullUrl += `?url=YOUR_URL_HERE`;
+            } else if (currentTool === 'ffguest') {
+                fullUrl += `?count=1`;
+            } else if (currentTool === 'tempmail') {
+                fullUrl += `?action=create`;
+            }
+
+            if (currentSnippetType === 'curl') {
+                document.getElementById('code-snippet').innerText = `curl -X GET "${fullUrl}"`;
+            } else {
+                document.getElementById('code-snippet').innerText = `const response = await fetch("${fullUrl}");\nconst data = await response.json();\nconsole.log(data);`;
+            }
+        }
+
+        function switchViewMode(mode) {
+            currentViewMode = mode;
+            document.getElementById('btn-mode-card').className = mode === 'card' ? 'text-xs px-3 py-1 rounded bg-indigo-600 text-white font-medium transition flex items-center space-x-1' : 'text-xs px-3 py-1 rounded text-slate-400 hover:text-white font-medium transition flex items-center space-x-1';
+            document.getElementById('btn-mode-raw').className = mode === 'raw' ? 'text-xs px-3 py-1 rounded bg-indigo-600 text-white font-medium transition flex items-center space-x-1' : 'text-xs px-3 py-1 rounded text-slate-400 hover:text-white font-medium transition flex items-center space-x-1';
+            
+            if (lastApiResponse) {
+                renderOutput(lastApiResponse);
+            }
+        }
+
+        function renderOutput(data) {
+            lastApiResponse = data;
+            const statusBadge = document.getElementById('response-status');
+            statusBadge.classList.remove('hidden');
+            
+            if (data.status) {
+                statusBadge.className = "text-[10px] px-2.5 py-0.5 rounded-full font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20";
+                statusBadge.innerText = "SUCCESS (200)";
+            } else {
+                statusBadge.className = "text-[10px] px-2.5 py-0.5 rounded-full font-medium bg-rose-500/10 text-rose-400 border border-rose-500/20";
+                statusBadge.innerText = "FAILED / ERROR";
+            }
+
+            // Raw JSON View
+            document.getElementById('output-raw-view').innerText = JSON.stringify(data, null, 2);
+
+            // Card View
+            const cardView = document.getElementById('output-card-view');
+            if (currentViewMode === 'card') {
+                document.getElementById('output-raw-view').classList.add('hidden');
+                cardView.classList.remove('hidden');
+                
+                let htmlContent = `<div class="p-3 bg-slate-900 border border-slate-800 rounded-xl space-y-2">`;
+                htmlContent += `<div class="flex justify-between text-xs text-slate-400 font-mono"><span>Status: ${data.status ? '✅ OK' : '❌ Error'}</span><span>Provider: ${data.provider || 'Monika Labs'}</span></div>`;
+                
+                if (data.result || data.data || data.message) {
+                    htmlContent += `<div class="bg-slate-950 p-3 rounded-lg border border-slate-800/60 font-mono text-xs overflow-x-auto text-indigo-300"><pre>${JSON.stringify(data.result || data.data || data.message, null, 2)}</pre></div>`;
+                } else {
+                    htmlContent += `<div class="bg-slate-950 p-3 rounded-lg border border-slate-800/60 font-mono text-xs overflow-x-auto text-indigo-300"><pre>${JSON.stringify(data, null, 2)}</pre></div>`;
+                }
+                htmlContent += `</div>`;
+                cardView.innerHTML = htmlContent;
+            } else {
+                cardView.classList.add('hidden');
+                document.getElementById('output-raw-view').classList.remove('hidden');
+            }
+        }
+
         async function executeApi(tool) {
             let endpoint = '';
-            const output = document.getElementById('json-output');
-            output.innerText = "Memproses permintaan...";
+            const cardView = document.getElementById('output-card-view');
+            cardView.innerHTML = `<p class="text-xs text-indigo-400 animate-pulse">Memproses permintaan ke server...</p>`;
 
             if (tool === 'mediafire') {
                 const url = document.getElementById('input-url').value;
@@ -217,9 +382,9 @@
             try {
                 const res = await fetch(endpoint);
                 const data = await res.json();
-                output.innerText = JSON.stringify(data, null, 2);
+                renderOutput(data);
             } catch (err) {
-                output.innerText = JSON.stringify({ status: false, message: err.message }, null, 2);
+                renderOutput({ status: false, message: err.message });
             }
         }
 
@@ -227,9 +392,10 @@
             const action = document.getElementById('input-action').value;
             const username = document.getElementById('input-username').value;
             const messageId = document.getElementById('input-messageid')?.value || '';
-            const output = document.getElementById('json-output');
             
-            output.innerText = "Memproses tempmail...";
+            const cardView = document.getElementById('output-card-view');
+            cardView.innerHTML = `<p class="text-xs text-indigo-400 animate-pulse">Memproses permintaan mail...</p>`;
+
             let endpoint = `/tools/tempmail?action=${action}`;
             if (username) endpoint += `&username=${encodeURIComponent(username)}`;
             if (messageId) endpoint += `&id=${encodeURIComponent(messageId)}`;
@@ -237,19 +403,24 @@
             try {
                 const res = await fetch(endpoint);
                 const data = await res.json();
-                output.innerText = JSON.stringify(data, null, 2);
+                renderOutput(data);
             } catch (err) {
-                output.innerText = JSON.stringify({ status: false, message: err.message }, null, 2);
+                renderOutput({ status: false, message: err.message });
             }
         }
 
-        function copyResult() {
-            const text = document.getElementById('json-output').innerText;
-            navigator.clipboard.writeText(text);
-            alert("JSON berhasil disalin ke clipboard!");
+        function copyBaseUrl() {
+            navigator.clipboard.writeText(baseUrl);
+            alert("Base URL berhasil disalin!");
         }
 
-        // Load default tab
+        function copyResult() {
+            const text = JSON.stringify(lastApiResponse, null, 2) || document.getElementById('output-raw-view').innerText;
+            navigator.clipboard.writeText(text);
+            alert("Response berhasil disalin ke clipboard!");
+        }
+
+        // Initialize default
         switchTab('mediafire');
     </script>
 </body>
