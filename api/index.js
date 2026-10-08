@@ -90,9 +90,19 @@ export default async function handler(req, res) {
             return res.status(200).json({ status: true, creator: 'ReyCode', message: "Success", result, timestamp });
         }
 
+        // Default response / Root API (Menampilkan daftar endpoint JSON kembali)
         return res.status(200).json({
             status: true,
             message: "Monika Labs API is active!",
+            endpoints: {
+                amgen: "/tools/amgen?action=sendlink&email=... / veriflink&email=...&link=...",
+                aio: "/download/aio?url=<target_url>",
+                tiktok: "/download/tiktok?url=<tiktok_url>",
+                mediafire: "/download/mediafire?url=<mediafire_url>",
+                amfinder: "/tools/amfinder?url=<tiktok_url_for_preset>",
+                tempmail: "/tools/tempmail?action=create / inbox / message",
+                ffguest: "/tools/ffguest?count=1 (max 10)"
+            },
             creator: "ReyCode",
             timestamp
         });
