@@ -1,6 +1,5 @@
 {
   "rewrites": [
-    { "source": "/ai/txt2img", "destination": "/api/index" },
     { "source": "/download/mediafire", "destination": "/api/index" },
     { "source": "/download/tiktok", "destination": "/api/index" },
     { "source": "/download/aio", "destination": "/api/index" },
