@@ -107,52 +107,54 @@
                 <div id="form-container"></div>
             </div>
 
-            <!-- Code Snippet / Request Examples -->
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
-                <div class="flex justify-between items-center mb-3">
-                    <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Contoh Kode Request</h3>
-                    <div class="flex space-x-2 bg-slate-950 p-1 rounded-lg border border-slate-800">
-                        <button onclick="switchSnippet('curl')" id="btn-snippet-curl" class="text-xs px-3 py-1 rounded bg-indigo-600 text-white font-medium transition">cURL</button>
-                        <button onclick="switchSnippet('node')" id="btn-snippet-node" class="text-xs px-3 py-1 rounded text-slate-400 hover:text-white font-medium transition">Node.js</button>
-                    </div>
-                </div>
-                <div class="bg-slate-950 rounded-xl border border-slate-800 p-4 font-mono text-xs text-indigo-300 overflow-x-auto">
-                    <pre id="code-snippet">Pilih tool untuk melihat contoh kode...</pre>
-                </div>
-            </div>
-
-            <!-- Response Result Card (Card View vs Raw JSON) -->
-            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
-                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
-                    <div class="flex items-center space-x-2">
-                        <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Response Output</h3>
-                        <span id="response-status" class="hidden text-[10px] px-2 py-0.5 rounded-full font-medium"></span>
-                    </div>
-                    
-                    <div class="flex items-center space-x-3">
-                        <!-- Mode Toggle: Card View vs Raw JSON -->
-                        <div class="flex space-x-1 bg-slate-950 p-1 rounded-lg border border-slate-800">
-                            <button onclick="switchViewMode('card')" id="btn-mode-card" class="text-xs px-3 py-1 rounded bg-indigo-600 text-white font-medium transition flex items-center space-x-1">
-                                <i class="fa-solid fa-id-card"></i><span>Card View</span>
-                            </button>
-                            <button onclick="switchViewMode('raw')" id="btn-mode-raw" class="text-xs px-3 py-1 rounded text-slate-400 hover:text-white font-medium transition flex items-center space-x-1">
-                                <i class="fa-solid fa-code"></i><span>Raw JSON</span>
-                            </button>
-                        </div>
-
-                        <button onclick="copyResult()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3 py-1.5 rounded-lg border border-slate-700 transition flex items-center space-x-1.5">
-                            <i class="fa-regular fa-copy"></i>
-                            <span>Salin</span>
+            <!-- Code Snippet & Endpoint URL Bar -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+                <div class="flex justify-between items-center">
+                    <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Endpoint & Request</h3>
+                    <div class="flex space-x-2">
+                        <button onclick="copyActiveEndpoint()" class="text-xs bg-indigo-600/20 text-indigo-400 hover:bg-indigo-600/30 border border-indigo-500/30 px-3 py-1.5 rounded-lg transition flex items-center space-x-1.5">
+                            <i class="fa-regular fa-copy"></i><span>Salin Endpoint</span>
                         </button>
                     </div>
                 </div>
+                
+                <!-- URL yang sedang diuji (mengikuti input) -->
+                <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 flex items-center justify-between text-xs font-mono text-emerald-400 overflow-x-auto">
+                    <span id="active-url-preview">https://api.monikalabs.web.id/download/mediafire</span>
+                </div>
 
-                <!-- Output Container -->
-                <div class="bg-slate-950 rounded-xl border border-slate-800 p-4 min-h-[160px] max-h-[450px] overflow-auto">
-                    <div id="output-card-view" class="space-y-3 text-sm">
-                        <p class="text-xs text-slate-500 italic">Hasil uji coba dalam bentuk card interaktif akan muncul di sini...</p>
+                <!-- Code Snippets cURL / Node.js -->
+                <div>
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-xs text-slate-400">Contoh Kode:</span>
+                        <div class="flex space-x-1 bg-slate-950 p-1 rounded-lg border border-slate-800">
+                            <button onclick="switchSnippet('curl')" id="btn-snippet-curl" class="text-xs px-3 py-1 rounded bg-indigo-600 text-white font-medium transition">cURL</button>
+                            <button onclick="switchSnippet('node')" id="btn-snippet-node" class="text-xs px-3 py-1 rounded text-slate-400 hover:text-white font-medium transition">Node.js</button>
+                        </div>
                     </div>
-                    <pre id="output-raw-view" class="hidden text-xs text-indigo-300 font-mono"></pre>
+                    <div class="bg-slate-950 rounded-xl border border-slate-800 p-3 font-mono text-xs text-indigo-300 overflow-x-auto">
+                        <pre id="code-snippet">curl -X GET "..."</pre>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Response Output (Card View Rapi & Tombol Salin JSON) -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl">
+                <div class="flex justify-between items-center mb-4">
+                    <div class="flex items-center space-x-2">
+                        <h3 class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Response Output</h3>
+                        <span id="response-status" class="hidden text-[10px] px-2.5 py-0.5 rounded-full font-medium"></span>
+                    </div>
+                    
+                    <button onclick="copyResultJson()" class="text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 px-3.5 py-1.5 rounded-lg border border-slate-700 transition flex items-center space-x-1.5 shadow">
+                        <i class="fa-regular fa-copy"></i>
+                        <span>Salin JSON</span>
+                    </button>
+                </div>
+
+                <!-- Card UI Container (Clean & Structured) -->
+                <div id="output-card-container" class="bg-slate-950 rounded-xl border border-slate-800 p-4 min-h-[160px] text-sm">
+                    <p class="text-xs text-slate-500 italic">Hasil uji coba API akan tampil dalam bentuk card visual yang rapi di sini...</p>
                 </div>
             </div>
 
@@ -168,7 +170,6 @@
     <script>
         let currentTool = 'mediafire';
         let currentSnippetType = 'curl';
-        let currentViewMode = 'card';
         let lastApiResponse = null;
         const baseUrl = window.location.origin;
 
@@ -180,7 +181,7 @@
                 html: `
                     <div>
                         <label class="block text-xs font-medium text-slate-300 mb-1">URL MediaFire</label>
-                        <input type="text" id="input-url" placeholder="https://www.mediafire.com/file/..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
+                        <input type="text" id="input-url" oninput="updateLiveUrl()" placeholder="https://www.mediafire.com/file/..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
                     </div>
                     <button onclick="executeApi('mediafire')" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2.5 rounded-xl transition shadow-lg shadow-indigo-600/20 text-sm">Jalankan Test</button>
                 `
@@ -192,7 +193,7 @@
                 html: `
                     <div>
                         <label class="block text-xs font-medium text-slate-300 mb-1">URL TikTok</label>
-                        <input type="text" id="input-url" placeholder="https://www.tiktok.com/@user/video/..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
+                        <input type="text" id="input-url" oninput="updateLiveUrl()" placeholder="https://www.tiktok.com/@user/video/..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
                     </div>
                     <button onclick="executeApi('tiktok')" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2.5 rounded-xl transition shadow-lg shadow-indigo-600/20 text-sm">Jalankan Test</button>
                 `
@@ -204,7 +205,7 @@
                 html: `
                     <div>
                         <label class="block text-xs font-medium text-slate-300 mb-1">URL TikTok Target</label>
-                        <input type="text" id="input-url" placeholder="https://www.tiktok.com/@user/video/..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
+                        <input type="text" id="input-url" oninput="updateLiveUrl()" placeholder="https://www.tiktok.com/@user/video/..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
                     </div>
                     <button onclick="executeApi('amfinder')" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2.5 rounded-xl transition shadow-lg shadow-indigo-600/20 text-sm">Cari Preset</button>
                 `
@@ -216,7 +217,7 @@
                 html: `
                     <div>
                         <label class="block text-xs font-medium text-slate-300 mb-1">Pilih Action</label>
-                        <select id="input-action" onchange="toggleTempmailFields()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
+                        <select id="input-action" onchange="toggleTempmailFields(); updateLiveUrl();" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
                             <option value="create">Buat Email Baru (Create)</option>
                             <option value="inbox">Cek Inbox (Inbox)</option>
                             <option value="message">Baca Pesan (Message)</option>
@@ -224,11 +225,11 @@
                     </div>
                     <div id="field-username">
                         <label class="block text-xs font-medium text-slate-300 mb-1">Username / Mailbox</label>
-                        <input type="text" id="input-username" placeholder="contoh: reycoder" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
+                        <input type="text" id="input-username" oninput="updateLiveUrl()" placeholder="contoh: reycoder" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
                     </div>
                     <div id="field-messageid" class="hidden">
                         <label class="block text-xs font-medium text-slate-300 mb-1">Message ID / Key</label>
-                        <input type="text" id="input-messageid" placeholder="ID pesan dari inbox" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
+                        <input type="text" id="input-messageid" oninput="updateLiveUrl()" placeholder="ID pesan dari inbox" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
                     </div>
                     <button onclick="executeTempmail()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2.5 rounded-xl transition shadow-lg shadow-indigo-600/20 text-sm">Proses Mail</button>
                 `
@@ -240,7 +241,7 @@
                 html: `
                     <div>
                         <label class="block text-xs font-medium text-slate-300 mb-1">Jumlah Akun (1 - 10)</label>
-                        <input type="number" id="input-count" value="1" min="1" max="10" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
+                        <input type="number" id="input-count" value="1" min="1" max="10" oninput="updateLiveUrl()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-indigo-500 transition">
                     </div>
                     <button onclick="executeApi('ffguest')" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2.5 rounded-xl transition shadow-lg shadow-indigo-600/20 text-sm">Generate Akun</button>
                 `
@@ -266,7 +267,7 @@
                 <div class="space-y-4 mt-4">${currentForm.html}</div>
             `;
             
-            updateCodeSnippet();
+            updateLiveUrl();
         }
 
         function toggleTempmailFields() {
@@ -286,43 +287,51 @@
             }
         }
 
+        function getConstructedUrl() {
+            const endpoint = forms[currentTool].endpoint;
+            let queryStr = '';
+
+            if (currentTool === 'mediafire' || currentTool === 'tiktok' || currentTool === 'amfinder') {
+                const val = document.getElementById('input-url')?.value.trim() || '';
+                if (val) queryStr = `?url=${encodeURIComponent(val)}`;
+            } else if (currentTool === 'ffguest') {
+                const val = document.getElementById('input-count')?.value || 1;
+                queryStr = `?count=${val}`;
+            } else if (currentTool === 'tempmail') {
+                const action = document.getElementById('input-action')?.value || 'create';
+                queryStr = `?action=${action}`;
+                if (action === 'inbox' || action === 'message') {
+                    const user = document.getElementById('input-username')?.value.trim();
+                    if (user) queryStr += `&username=${encodeURIComponent(user)}`;
+                }
+                if (action === 'message') {
+                    const msgId = document.getElementById('input-messageid')?.value.trim();
+                    if (msgId) queryStr += `&id=${encodeURIComponent(msgId)}`;
+                }
+            }
+
+            return `${baseUrl}${endpoint}${queryStr}`;
+        }
+
+        function updateLiveUrl() {
+            const fullUrl = getConstructedUrl();
+            document.getElementById('active-url-preview').innerText = fullUrl;
+            
+            if (currentSnippetType === 'curl') {
+                document.getElementById('code-snippet').innerText = `curl -X GET "${fullUrl}"`;
+            } else {
+                document.getElementById('code-snippet').innerText = `const res = await fetch("${fullUrl}");\nconst data = await res.json();\nconsole.log(data);`;
+            }
+        }
+
         function switchSnippet(type) {
             currentSnippetType = type;
             document.getElementById('btn-snippet-curl').className = type === 'curl' ? 'text-xs px-3 py-1 rounded bg-indigo-600 text-white font-medium transition' : 'text-xs px-3 py-1 rounded text-slate-400 hover:text-white font-medium transition';
             document.getElementById('btn-snippet-node').className = type === 'node' ? 'text-xs px-3 py-1 rounded bg-indigo-600 text-white font-medium transition' : 'text-xs px-3 py-1 rounded text-slate-400 hover:text-white font-medium transition';
-            updateCodeSnippet();
+            updateLiveUrl();
         }
 
-        function updateCodeSnippet() {
-            const endpoint = forms[currentTool].endpoint;
-            let fullUrl = `${baseUrl}${endpoint}`;
-            
-            if (currentTool === 'mediafire' || currentTool === 'tiktok' || currentTool === 'amfinder') {
-                fullUrl += `?url=YOUR_URL_HERE`;
-            } else if (currentTool === 'ffguest') {
-                fullUrl += `?count=1`;
-            } else if (currentTool === 'tempmail') {
-                fullUrl += `?action=create`;
-            }
-
-            if (currentSnippetType === 'curl') {
-                document.getElementById('code-snippet').innerText = `curl -X GET "${fullUrl}"`;
-            } else {
-                document.getElementById('code-snippet').innerText = `const response = await fetch("${fullUrl}");\nconst data = await response.json();\nconsole.log(data);`;
-            }
-        }
-
-        function switchViewMode(mode) {
-            currentViewMode = mode;
-            document.getElementById('btn-mode-card').className = mode === 'card' ? 'text-xs px-3 py-1 rounded bg-indigo-600 text-white font-medium transition flex items-center space-x-1' : 'text-xs px-3 py-1 rounded text-slate-400 hover:text-white font-medium transition flex items-center space-x-1';
-            document.getElementById('btn-mode-raw').className = mode === 'raw' ? 'text-xs px-3 py-1 rounded bg-indigo-600 text-white font-medium transition flex items-center space-x-1' : 'text-xs px-3 py-1 rounded text-slate-400 hover:text-white font-medium transition flex items-center space-x-1';
-            
-            if (lastApiResponse) {
-                renderOutput(lastApiResponse);
-            }
-        }
-
-        function renderOutput(data) {
+        function renderStructuredCard(data) {
             lastApiResponse = data;
             const statusBadge = document.getElementById('response-status');
             statusBadge.classList.remove('hidden');
@@ -335,89 +344,131 @@
                 statusBadge.innerText = "FAILED / ERROR";
             }
 
-            // Raw JSON View
-            document.getElementById('output-raw-view').innerText = JSON.stringify(data, null, 2);
+            const container = document.getElementById('output-card-container');
+            let html = '';
 
-            // Card View
-            const cardView = document.getElementById('output-card-view');
-            if (currentViewMode === 'card') {
-                document.getElementById('output-raw-view').classList.add('hidden');
-                cardView.classList.remove('hidden');
-                
-                let htmlContent = `<div class="p-3 bg-slate-900 border border-slate-800 rounded-xl space-y-2">`;
-                htmlContent += `<div class="flex justify-between text-xs text-slate-400 font-mono"><span>Status: ${data.status ? '✅ OK' : '❌ Error'}</span><span>Provider: ${data.provider || 'Monika Labs'}</span></div>`;
-                
-                if (data.result || data.data || data.message) {
-                    htmlContent += `<div class="bg-slate-950 p-3 rounded-lg border border-slate-800/60 font-mono text-xs overflow-x-auto text-indigo-300"><pre>${JSON.stringify(data.result || data.data || data.message, null, 2)}</pre></div>`;
-                } else {
-                    htmlContent += `<div class="bg-slate-950 p-3 rounded-lg border border-slate-800/60 font-mono text-xs overflow-x-auto text-indigo-300"><pre>${JSON.stringify(data, null, 2)}</pre></div>`;
-                }
-                htmlContent += `</div>`;
-                cardView.innerHTML = htmlContent;
-            } else {
-                cardView.classList.add('hidden');
-                document.getElementById('output-raw-view').classList.remove('hidden');
+            if (!data.status) {
+                container.innerHTML = `
+                    <div class="bg-rose-500/10 border border-rose-500/20 rounded-xl p-4 text-rose-400 text-xs">
+                        <p class="font-bold mb-1">Gagal Memproses:</p>
+                        <p>${data.message || 'Terjadi kesalahan sistem.'}</p>
+                    </div>
+                `;
+                return;
             }
+
+            // Render khusus TikTok Downloader dengan Video Preview
+            if (currentTool === 'tiktok' && data.result) {
+                const res = data.result;
+                html += `
+                    <div class="space-y-4">
+                        <div class="flex items-center space-x-3 bg-slate-900 p-3 rounded-xl border border-slate-800">
+                            ${res.author?.avatar ? `<img src="${res.author.avatar}" class="w-10 h-10 rounded-full border border-slate-700">` : ''}
+                            <div>
+                                <h4 class="font-bold text-sm text-slate-200">${res.author?.nickname || 'TikTok User'}</h4>
+                                <p class="text-xs text-slate-400">@${res.author?.fullname || '-'}</p>
+                            </div>
+                        </div>
+
+                        <p class="text-xs text-slate-300 font-medium">${res.title || '-'}</p>
+
+                        ${res.video_url ? `
+                            <div class="rounded-xl overflow-hidden border border-slate-800 bg-black flex justify-center">
+                                <video src="${res.video_url}" controls class="max-h-[300px] w-auto"></video>
+                            </div>
+                            <div class="flex gap-2">
+                                <a href="${res.video_url}" target="_blank" class="flex-1 bg-indigo-600 hover:bg-indigo-500 text-center py-2 rounded-xl text-xs font-medium text-white transition">Download Video</a>
+                                ${res.audio_url ? `<a href="${res.audio_url}" target="_blank" class="flex-1 bg-slate-800 hover:bg-slate-700 text-center py-2 rounded-xl text-xs font-medium text-slate-200 transition">Download Audio</a>` : ''}
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            } 
+            // Render khusus MediaFire
+            else if (currentTool === 'mediafire' && data.result) {
+                const r = data.result;
+                html += `
+                    <div class="space-y-3 bg-slate-900 p-4 rounded-xl border border-slate-800 text-xs">
+                        <p class="font-bold text-sm text-slate-200">${r.fileName || 'File MediaFire'}</p>
+                        <div class="grid grid-cols-2 gap-2 text-slate-400">
+                            <div>Ukuran: <span class="text-slate-200 font-medium">${r.fileSize || '-'}</span></div>
+                            <div>Upload: <span class="text-slate-200 font-medium">${r.uploadDate || '-'}</span></div>
+                        </div>
+                        <a href="${r.downloadUrl}" target="_blank" class="block w-full bg-emerald-600 hover:bg-emerald-500 text-center py-2.5 rounded-xl text-xs font-bold text-white transition mt-2">Unduh File Sekarang</a>
+                    </div>
+                `;
+            }
+            // Render Free Fire Guest
+            else if (currentTool === 'ffguest' && data.result) {
+                html += `<div class="space-y-3 max-h-[300px] overflow-auto">`;
+                data.result.accounts.forEach(acc => {
+                    html += `
+                        <div class="bg-slate-900 p-3 rounded-xl border border-slate-800 text-xs flex justify-between items-center">
+                            <div>
+                                <p class="text-indigo-400 font-bold">Akun #${acc.index}</p>
+                                <p class="text-slate-300 font-mono">UID: ${acc.uid}</p>
+                                <p class="text-slate-500 font-mono truncate max-w-[200px]">Pass: ${acc.password}</p>
+                            </div>
+                            <button onclick="navigator.clipboard.writeText('UID: ${acc.uid} | Pass: ${acc.password}'); alert('Akun disalin!');" class="bg-slate-800 hover:bg-slate-700 px-3 py-1.5 rounded-lg text-slate-300">Salin</button>
+                        </div>
+                    `;
+                });
+                html += `</div>`;
+            }
+            // Render TempMail & lainnya dalam Card rapi
+            else {
+                html += `
+                    <div class="bg-slate-900 p-4 rounded-xl border border-slate-800 space-y-2 text-xs">
+                        <div class="flex justify-between text-slate-400">
+                            <span>Status: Berhasil</span>
+                            <span>Provider: ${data.provider || 'Monika Labs'}</span>
+                        </div>
+                        <div class="bg-slate-950 p-3 rounded-lg border border-slate-800 font-mono text-indigo-300 overflow-x-auto max-h-[250px]">
+                            <pre>${JSON.stringify(data.result || data.data || data, null, 2)}</pre>
+                        </div>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
         }
 
         async function executeApi(tool) {
-            let endpoint = '';
-            const cardView = document.getElementById('output-card-view');
-            cardView.innerHTML = `<p class="text-xs text-indigo-400 animate-pulse">Memproses permintaan ke server...</p>`;
-
-            if (tool === 'mediafire') {
-                const url = document.getElementById('input-url').value;
-                endpoint = `/download/mediafire?url=${encodeURIComponent(url)}`;
-            } else if (tool === 'tiktok') {
-                const url = document.getElementById('input-url').value;
-                endpoint = `/download/tiktok?url=${encodeURIComponent(url)}`;
-            } else if (tool === 'amfinder') {
-                const url = document.getElementById('input-url').value;
-                endpoint = `/tools/amfinder?url=${encodeURIComponent(url)}`;
-            } else if (tool === 'ffguest') {
-                const count = document.getElementById('input-count').value;
-                endpoint = `/tools/ffguest?count=${count}`;
-            }
+            const endpointUrl = getConstructedUrl();
+            const container = document.getElementById('output-card-container');
+            container.innerHTML = `<p class="text-xs text-indigo-400 animate-pulse text-center py-6">Memproses permintaan ke server...</p>`;
 
             try {
-                const res = await fetch(endpoint);
+                const res = await fetch(endpointUrl);
                 const data = await res.json();
-                renderOutput(data);
+                renderStructuredCard(data);
             } catch (err) {
-                renderOutput({ status: false, message: err.message });
+                renderStructuredCard({ status: false, message: err.message });
             }
         }
 
         async function executeTempmail() {
-            const action = document.getElementById('input-action').value;
-            const username = document.getElementById('input-username').value;
-            const messageId = document.getElementById('input-messageid')?.value || '';
-            
-            const cardView = document.getElementById('output-card-view');
-            cardView.innerHTML = `<p class="text-xs text-indigo-400 animate-pulse">Memproses permintaan mail...</p>`;
+            executeApi('tempmail');
+        }
 
-            let endpoint = `/tools/tempmail?action=${action}`;
-            if (username) endpoint += `&username=${encodeURIComponent(username)}`;
-            if (messageId) endpoint += `&id=${encodeURIComponent(messageId)}`;
+        function copyActiveEndpoint() {
+            const url = getConstructedUrl();
+            navigator.clipboard.writeText(url);
+            alert("Endpoint URL berhasil disalin!");
+        }
 
-            try {
-                const res = await fetch(endpoint);
-                const data = await res.json();
-                renderOutput(data);
-            } catch (err) {
-                renderOutput({ status: false, message: err.message });
+        function copyResultJson() {
+            if (!lastApiResponse) {
+                alert("Belum ada data response untuk disalin!");
+                return;
             }
+            navigator.clipboard.writeText(JSON.stringify(lastApiResponse, null, 2));
+            alert("Response JSON berhasil disalin ke clipboard!");
         }
 
         function copyBaseUrl() {
             navigator.clipboard.writeText(baseUrl);
             alert("Base URL berhasil disalin!");
-        }
-
-        function copyResult() {
-            const text = JSON.stringify(lastApiResponse, null, 2) || document.getElementById('output-raw-view').innerText;
-            navigator.clipboard.writeText(text);
-            alert("Response berhasil disalin ke clipboard!");
         }
 
         // Initialize default
