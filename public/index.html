@@ -480,6 +480,25 @@
                             </button>
                         </div>
                     </div>
+
+                    <div class="folder" id="folder-canvas">
+                        <div onclick="toggleFolder('folder-canvas')" class="folder-header flex items-center justify-between px-3 py-2.5 rounded-2xl bg-slate-900/60 border border-slate-800">
+                            <div class="flex items-center gap-2.5">
+                                <i class="fa-solid fa-folder text-pink-400 text-xs"></i>
+                                <span class="text-xs font-bold text-slate-200">/canvas</span>
+                            </div>
+                            <i class="folder-arrow fa-solid fa-chevron-right text-[10px] text-slate-400"></i>
+                        </div>
+                        <div class="folder-content space-y-1.5 pl-2 pt-2">
+                            <button onclick="switchTab('faketele')" id="btn-faketele" class="tab-btn tool-btn w-full text-left px-3 py-2.5 rounded-2xl flex items-center gap-3 text-slate-300">
+                                <span class="tool-icon"><i class="fa-solid fa-id-card text-xs"></i></span>
+                                <span class="flex-1 min-w-0">
+                                    <span class="block text-xs font-bold truncate">Fake Telegram Profile</span>
+                                    <code class="block text-[9px] text-slate-500 font-mono mt-0.5">/canvas/faketele</code>
+                                </span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </aside>
 
@@ -605,7 +624,7 @@
                         <div>
                             <div class="flex items-center gap-2">
                                 <h3 class="text-lg font-extrabold text-white">AIO Downloader</h3>
-                                <code class="text-[9px] text-indigo-300 bg-indigo-500/10 px-2 py-1 rounded-lg">POST/GET</code>
+                                <code class="text-[9px] text-indigo-300 bg-indigo-500/10 px-2 py-1 rounded-lg">GET</code>
                             </div>
                             <p class="text-[11px] text-slate-500 mt-1">Download media dari berbagai platform secara universal.</p>
                         </div>
@@ -732,6 +751,44 @@
                     </div>
                     <button onclick="executeApi('ffguest')" class="modern-btn primary-btn w-full mt-4 rounded-2xl py-3.5 text-xs font-extrabold text-white"><i class="fa-solid fa-bolt mr-2"></i>Generate Akun</button>
                 `
+            },
+            faketele: {
+                endpoint: '/canvas/faketele',
+                html: `
+                    <div class="flex items-start gap-4 mb-6">
+                        <div class="w-11 h-11 rounded-2xl bg-pink-500/10 border border-pink-500/10 grid place-items-center flex-shrink-0"><i class="fa-solid fa-id-card text-pink-400"></i></div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h3 class="text-lg font-extrabold text-white">Fake Telegram Profile</h3>
+                                <code class="text-[9px] text-pink-300 bg-pink-500/10 px-2 py-1 rounded-lg">IMAGE</code>
+                            </div>
+                            <p class="text-[11px] text-slate-500 mt-1">Generate gambar profil Telegram palsu.</p>
+                        </div>
+                    </div>
+                    <div class="space-y-3">
+                        <div>
+                            <label class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Nama</label>
+                            <input type="text" id="input-name" oninput="updateLiveUrl()" placeholder="Rey" class="custom-input mt-1">
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Nomor HP</label>
+                            <input type="text" id="input-phone" oninput="updateLiveUrl()" placeholder="+62 812..." class="custom-input mt-1">
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Bio</label>
+                            <input type="text" id="input-bio" oninput="updateLiveUrl()" placeholder="Available" class="custom-input mt-1">
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Username</label>
+                            <input type="text" id="input-username" oninput="updateLiveUrl()" placeholder="reycode" class="custom-input mt-1">
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Avatar URL (Foto)</label>
+                            <input type="text" id="input-avatar" oninput="updateLiveUrl()" placeholder="https://..." class="custom-input mt-1">
+                        </div>
+                    </div>
+                    <button onclick="executeCanvas('faketele')" class="modern-btn primary-btn w-full mt-4 rounded-2xl py-3.5 text-xs font-extrabold text-white"><i class="fa-solid fa-image mr-2"></i>Generate Gambar</button>
+                `
             }
         };
 
@@ -772,6 +829,13 @@
                     const msgId = document.getElementById('input-messageid')?.value.trim();
                     if (msgId) queryStr += `&id=${encodeURIComponent(msgId)}`;
                 }
+            } else if (currentTool === 'faketele') {
+                const name = document.getElementById('input-name')?.value.trim() || '';
+                const phone = document.getElementById('input-phone')?.value.trim() || '';
+                const bio = document.getElementById('input-bio')?.value.trim() || '';
+                const username = document.getElementById('input-username')?.value.trim() || '';
+                const avatar = document.getElementById('input-avatar')?.value.trim() || '';
+                queryStr = `?name=${encodeURIComponent(name)}&phone=${encodeURIComponent(phone)}&bio=${encodeURIComponent(bio)}&username=${encodeURIComponent(username)}&avatar=${encodeURIComponent(avatar)}`;
             }
             return `${baseUrl}${endpoint}${queryStr}`;
         }
@@ -840,6 +904,28 @@
             } catch (err) {
                 renderStructuredCard({ status: false, message: err.message });
             }
+        }
+
+        async function executeCanvas(tool) {
+            const endpointUrl = getConstructedUrl();
+            const container = document.getElementById('output-card-container');
+            container.innerHTML = `<div class="flex flex-col items-center justify-center min-h-[170px]"><div class="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/10 grid place-items-center mb-4"><i class="fa-solid fa-circle-notch fa-spin text-indigo-400"></i></div><p class="text-xs text-slate-300 font-bold">Memproses Canvas...</p><p class="text-[10px] text-slate-600 mt-1">Merender gambar...</p></div>`;
+            
+            lastApiResponse = { status: true, endpoint: endpointUrl };
+            const statusBadge = document.getElementById('response-status');
+            statusBadge.classList.remove('hidden');
+            statusBadge.className = 'text-[9px] px-2.5 py-1 rounded-full font-extrabold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
+            statusBadge.innerText = 'SUCCESS • 200';
+
+            container.innerHTML = `
+                <div class="rounded-2xl p-4 bg-slate-900/65 border border-slate-800 space-y-3 text-center">
+                    <p class="text-xs font-bold text-slate-200">Hasil Render Fake Telegram Profile:</p>
+                    <div class="bg-slate-950 p-2 rounded-xl border border-slate-800 inline-block">
+                        <img src="${endpointUrl}" class="max-h-[350px] w-auto rounded-lg mx-auto" alt="Fake Tele Result">
+                    </div>
+                    <a href="${endpointUrl}" target="_blank" rel="noopener noreferrer" class="modern-btn primary-btn block text-center w-full py-2.5 rounded-xl text-[10px] font-extrabold text-white">Buka Gambar di Tab Baru</a>
+                </div>
+            `;
         }
 
         function executeTempmail() {
