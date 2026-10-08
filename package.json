@@ -8,6 +8,7 @@
     "start": "node api/index.js"
   },
   "dependencies": {
+    "@napi-rs/canvas": "^0.1.62",
     "axios": "^1.7.9",
     "cheerio": "^1.0.0"
   }
