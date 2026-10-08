@@ -760,34 +760,34 @@
                         <div>
                             <div class="flex items-center gap-2">
                                 <h3 class="text-lg font-extrabold text-white">Fake Telegram Profile</h3>
-                                <code class="text-[9px] text-pink-300 bg-pink-500/10 px-2 py-1 rounded-lg">IMAGE</code>
+                                <code class="text-[9px] text-pink-300 bg-pink-500/10 px-2 py-1 rounded-lg">POST / UPLOAD</code>
                             </div>
-                            <p class="text-[11px] text-slate-500 mt-1">Generate gambar profil Telegram palsu.</p>
+                            <p class="text-[11px] text-slate-500 mt-1">Generate profil Telegram dengan upload foto.</p>
                         </div>
                     </div>
                     <div class="space-y-3">
                         <div>
                             <label class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Nama</label>
-                            <input type="text" id="input-name" oninput="updateLiveUrl()" placeholder="Rey" class="custom-input mt-1">
+                            <input type="text" id="input-name" placeholder="Rey" class="custom-input mt-1">
                         </div>
                         <div>
                             <label class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Nomor HP</label>
-                            <input type="text" id="input-phone" oninput="updateLiveUrl()" placeholder="+62 812..." class="custom-input mt-1">
+                            <input type="text" id="input-phone" placeholder="+62 812..." class="custom-input mt-1">
                         </div>
                         <div>
                             <label class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Bio</label>
-                            <input type="text" id="input-bio" oninput="updateLiveUrl()" placeholder="Available" class="custom-input mt-1">
+                            <input type="text" id="input-bio" placeholder="Available" class="custom-input mt-1">
                         </div>
                         <div>
                             <label class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Username</label>
-                            <input type="text" id="input-username" oninput="updateLiveUrl()" placeholder="reycode" class="custom-input mt-1">
+                            <input type="text" id="input-username" placeholder="reycode" class="custom-input mt-1">
                         </div>
                         <div>
-                            <label class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Avatar URL (Foto)</label>
-                            <input type="text" id="input-avatar" oninput="updateLiveUrl()" placeholder="https://..." class="custom-input mt-1">
+                            <label class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Upload Foto Profil</label>
+                            <input type="file" id="input-file" accept="image/*" class="custom-input mt-1 cursor-pointer file:mr-4 file:py-1 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-indigo-600 file:text-white hover:file:bg-indigo-500">
                         </div>
                     </div>
-                    <button onclick="executeCanvas('faketele')" class="modern-btn primary-btn w-full mt-4 rounded-2xl py-3.5 text-xs font-extrabold text-white"><i class="fa-solid fa-image mr-2"></i>Generate Gambar</button>
+                    <button onclick="executeUploadCanvas()" class="modern-btn primary-btn w-full mt-4 rounded-2xl py-3.5 text-xs font-extrabold text-white"><i class="fa-solid fa-cloud-arrow-up mr-2"></i>Upload & Generate Canvas</button>
                 `
             }
         };
@@ -830,12 +830,7 @@
                     if (msgId) queryStr += `&id=${encodeURIComponent(msgId)}`;
                 }
             } else if (currentTool === 'faketele') {
-                const name = document.getElementById('input-name')?.value.trim() || '';
-                const phone = document.getElementById('input-phone')?.value.trim() || '';
-                const bio = document.getElementById('input-bio')?.value.trim() || '';
-                const username = document.getElementById('input-username')?.value.trim() || '';
-                const avatar = document.getElementById('input-avatar')?.value.trim() || '';
-                queryStr = `?name=${encodeURIComponent(name)}&phone=${encodeURIComponent(phone)}&bio=${encodeURIComponent(bio)}&username=${encodeURIComponent(username)}&avatar=${encodeURIComponent(avatar)}`;
+                return `${baseUrl}${endpoint} (Method: POST Multipart Form)`;
             }
             return `${baseUrl}${endpoint}${queryStr}`;
         }
@@ -843,7 +838,7 @@
         function updateLiveUrl() {
             const fullUrl = getConstructedUrl();
             document.getElementById('active-url-preview').textContent = fullUrl;
-            document.getElementById('code-snippet').textContent = currentSnippetType === 'curl' ? `curl -X GET "${fullUrl}"` : `const res = await fetch("${fullUrl}");\nconst data = await res.json();\nconsole.log(data);`;
+            document.getElementById('code-snippet').textContent = currentSnippetType === 'curl' ? `curl -X POST "${baseUrl}/canvas/faketele" -F "name=..." -F "phone=..." -F "bio=..." -F "username=..." -F "image=@foto.jpg"` : `const formData = new FormData();\nformData.append('name', 'Rey');\nformData.append('image', fileInput.files[0]);\nconst res = await fetch("${baseUrl}/canvas/faketele", { method: 'POST', body: formData });`;
         }
 
         function switchSnippet(type) {
@@ -906,26 +901,60 @@
             }
         }
 
-        async function executeCanvas(tool) {
-            const endpointUrl = getConstructedUrl();
-            const container = document.getElementById('output-card-container');
-            container.innerHTML = `<div class="flex flex-col items-center justify-center min-h-[170px]"><div class="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/10 grid place-items-center mb-4"><i class="fa-solid fa-circle-notch fa-spin text-indigo-400"></i></div><p class="text-xs text-slate-300 font-bold">Memproses Canvas...</p><p class="text-[10px] text-slate-600 mt-1">Merender gambar...</p></div>`;
-            
-            lastApiResponse = { status: true, endpoint: endpointUrl };
-            const statusBadge = document.getElementById('response-status');
-            statusBadge.classList.remove('hidden');
-            statusBadge.className = 'text-[9px] px-2.5 py-1 rounded-full font-extrabold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
-            statusBadge.innerText = 'SUCCESS • 200';
+        async function executeUploadCanvas() {
+            const name = document.getElementById('input-name')?.value.trim();
+            const phone = document.getElementById('input-phone')?.value.trim();
+            const bio = document.getElementById('input-bio')?.value.trim();
+            const username = document.getElementById('input-username')?.value.trim();
+            const fileInput = document.getElementById('input-file');
 
-            container.innerHTML = `
-                <div class="rounded-2xl p-4 bg-slate-900/65 border border-slate-800 space-y-3 text-center">
-                    <p class="text-xs font-bold text-slate-200">Hasil Render Fake Telegram Profile:</p>
-                    <div class="bg-slate-950 p-2 rounded-xl border border-slate-800 inline-block">
-                        <img src="${endpointUrl}" class="max-h-[350px] w-auto rounded-lg mx-auto" alt="Fake Tele Result">
+            if (!name || !phone || !bio || !username || !fileInput.files[0]) {
+                showToast('Semua field dan foto wajib diisi!', 'error');
+                return;
+            }
+
+            const container = document.getElementById('output-card-container');
+            container.innerHTML = `<div class="flex flex-col items-center justify-center min-h-[170px]"><div class="w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/10 grid place-items-center mb-4"><i class="fa-solid fa-circle-notch fa-spin text-indigo-400"></i></div><p class="text-xs text-slate-300 font-bold">Mengunggah foto & merender canvas...</p><p class="text-[10px] text-slate-600 mt-1">Mohon tunggu sebentar</p></div>`;
+
+            try {
+                const formData = new FormData();
+                formData.append('name', name);
+                formData.append('phone', phone);
+                formData.append('bio', bio);
+                formData.append('username', username);
+                formData.append('image', fileInput.files[0]);
+
+                const res = await fetch(`${baseUrl}/canvas/faketele`, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!res.ok) {
+                    const errJson = await res.json();
+                    throw new Error(errJson.message || 'Gagal memproses canvas.');
+                }
+
+                const blob = await res.blob();
+                const imageUrl = URL.createObjectURL(blob);
+
+                lastApiResponse = { status: true, message: "Fake Telegram Profile generated successfully" };
+                const statusBadge = document.getElementById('response-status');
+                statusBadge.classList.remove('hidden');
+                statusBadge.className = 'text-[9px] px-2.5 py-1 rounded-full font-extrabold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
+                statusBadge.innerText = 'SUCCESS • 200';
+
+                container.innerHTML = `
+                    <div class="rounded-2xl p-4 bg-slate-900/65 border border-slate-800 space-y-3 text-center">
+                        <p class="text-xs font-bold text-slate-200">Hasil Render Fake Telegram Profile:</p>
+                        <div class="bg-slate-950 p-2 rounded-xl border border-slate-800 inline-block">
+                            <img src="${imageUrl}" class="max-h-[350px] w-auto rounded-lg mx-auto" alt="Fake Tele Result">
+                        </div>
+                        <a href="${imageUrl}" target="_blank" download="faketele.png" class="modern-btn primary-btn block text-center w-full py-2.5 rounded-xl text-[10px] font-extrabold text-white">Download Gambar</a>
                     </div>
-                    <a href="${endpointUrl}" target="_blank" rel="noopener noreferrer" class="modern-btn primary-btn block text-center w-full py-2.5 rounded-xl text-[10px] font-extrabold text-white">Buka Gambar di Tab Baru</a>
-                </div>
-            `;
+                `;
+            } catch (err) {
+                renderStructuredCard({ status: false, message: err.message });
+            }
         }
 
         function executeTempmail() {
