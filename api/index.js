@@ -4,6 +4,7 @@ import { findAmPreset } from '../lib/amfinder.js';
 import tempmail from '../lib/tempmail.js';
 import { createFreeFireGuest } from '../lib/createguestff.js';
 import { mediaDownloader } from '../lib/aiodownload.js';
+import { createFakeTelegramProfile } from '../lib/faketele.js';
 
 export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -21,6 +22,27 @@ export default async function handler(req, res) {
     const urlParam = params.url || params.link;
 
     try {
+        // Route: /tools/faketele (Fake Telegram Profile Generator)
+        if (path.includes('/tools/faketele')) {
+            const name = params.name || params.nama;
+            const phone = params.phone || params.ponsel;
+            const bio = params.bio;
+            const username = params.username;
+            const avatarUrl = params.avatar || params.img || params.url;
+
+            if (!name || !phone || !bio || !username || !avatarUrl) {
+                return res.status(400).json({
+                    status: false,
+                    message: "Parameter lengkap wajib diisi: ?name=...&phone=...&bio=...&username=...&avatar=..."
+                });
+            }
+
+            const imageBuffer = await createFakeTelegramProfile({ name, phone, bio, username, avatarUrl });
+            
+            res.setHeader('Content-Type', 'image/png');
+            return res.status(200).send(imageBuffer);
+        }
+
         // Route: /download/aio (All-in-One Media Downloader)
         if (path.includes('/download/aio')) {
             if (!urlParam) {
@@ -112,6 +134,7 @@ export default async function handler(req, res) {
             status: true,
             message: "Monika Labs API is active!",
             endpoints: {
+                faketele: "/tools/faketele?name=...&phone=...&bio=...&username=...&avatar=...",
                 aio: "/download/aio?url=<target_url>",
                 tiktok: "/download/tiktok?url=<tiktok_url>",
                 mediafire: "/download/mediafire?url=<mediafire_url>",
