@@ -3,6 +3,7 @@ import { scrapeTikTok } from '../lib/tiktok.js';
 import { findAmPreset } from '../lib/amfinder.js';
 import tempmail from '../lib/tempmail.js';
 import { createFreeFireGuest } from '../lib/createguestff.js';
+import { mediaDownloader } from '../lib/aiodownload.js';
 
 export default async function handler(req, res) {
     res.setHeader('Access-Control-Allow-Origin', '*');
@@ -20,6 +21,19 @@ export default async function handler(req, res) {
     const urlParam = params.url || params.link;
 
     try {
+        // Route: /download/aio (All-in-One Media Downloader)
+        if (path.includes('/download/aio')) {
+            if (!urlParam) {
+                return res.status(400).json({
+                    status: false,
+                    message: "Parameter 'url' wajib disertakan. Contoh: /download/aio?url=<link_target>"
+                });
+            }
+
+            const result = await mediaDownloader(urlParam);
+            return res.status(200).json({ status: true, result });
+        }
+
         // Route: /tools/ffguest (Free Fire Guest Account Generator)
         if (path.includes('/tools/ffguest')) {
             const count = parseInt(params.count || params.jumlah || 1);
@@ -31,7 +45,7 @@ export default async function handler(req, res) {
             });
         }
 
-        // Route: /tools/tempmail
+        // Route: /tools/tempmail (Temporary Mail API)
         if (path.includes('/tools/tempmail')) {
             const action = String(params.action || '').toLowerCase();
 
@@ -72,36 +86,38 @@ export default async function handler(req, res) {
             });
         }
 
-        // Route: /download/tiktok
+        // Route: /download/tiktok (TikTok Downloader)
         if (path.includes('/download/tiktok')) {
             if (!urlParam) return res.status(400).json({ status: false, message: "Parameter 'url' TikTok wajib disertakan." });
             const result = await scrapeTikTok(urlParam);
             return res.status(200).json({ status: true, result });
         }
 
-        // Route: /download/mediafire
+        // Route: /download/mediafire (MediaFire Downloader)
         if (path.includes('/download/mediafire')) {
             if (!urlParam) return res.status(400).json({ status: false, message: "Parameter 'url' MediaFire wajib disertakan." });
             const result = await mediafire(urlParam);
             return res.status(200).json({ status: true, result });
         }
 
-        // Route: /tools/amfinder
+        // Route: /tools/amfinder (AM Preset Finder)
         if (path.includes('/tools/amfinder')) {
             if (!urlParam) return res.status(400).json({ status: false, message: "Parameter 'url' TikTok wajib disertakan." });
             const result = await findAmPreset(urlParam);
             return res.status(200).json({ status: true, result });
         }
 
+        // Default response / Root API
         return res.status(200).json({
             status: true,
             message: "Monika Labs API is active!",
             endpoints: {
-                ffguest: "/tools/ffguest?count=1 (max 10)",
-                tempmail: "/tools/tempmail?action=create / inbox / message",
+                aio: "/download/aio?url=<target_url>",
                 tiktok: "/download/tiktok?url=<tiktok_url>",
                 mediafire: "/download/mediafire?url=<mediafire_url>",
-                amfinder: "/tools/amfinder?url=<tiktok_url_for_preset>"
+                amfinder: "/tools/amfinder?url=<tiktok_url_for_preset>",
+                tempmail: "/tools/tempmail?action=create / inbox / message",
+                ffguest: "/tools/ffguest?count=1 (max 10)"
             },
             creator: "ReyCode",
             timestamp: new Date().toISOString()
