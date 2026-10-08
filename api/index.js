@@ -90,7 +90,6 @@ export default async function handler(req, res) {
             return res.status(200).json({ status: true, creator: 'ReyCode', message: "Success", result, timestamp });
         }
 
-        // Default response / Root API (Menampilkan daftar endpoint JSON kembali)
         return res.status(200).json({
             status: true,
             message: "Monika Labs API is active!",
