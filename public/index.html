@@ -158,7 +158,7 @@
         }
 
         .folder.open .folder-content {
-            max-height: 300px;
+            max-height: 350px;
             opacity: 1;
         }
 
@@ -424,6 +424,13 @@
                             <i class="folder-arrow fa-solid fa-chevron-right text-[10px] text-slate-400"></i>
                         </div>
                         <div class="folder-content space-y-1.5 pl-2 pt-2">
+                            <button onclick="switchTab('aio')" id="btn-aio" class="tab-btn tool-btn w-full text-left px-3 py-2.5 rounded-2xl flex items-center gap-3 text-slate-300">
+                                <span class="tool-icon"><i class="fa-solid fa-cloud-arrow-down text-xs"></i></span>
+                                <span class="flex-1 min-w-0">
+                                    <span class="block text-xs font-bold truncate">AIO Downloader</span>
+                                    <code class="block text-[9px] text-slate-500 font-mono mt-0.5">/download/aio</code>
+                                </span>
+                            </button>
                             <button onclick="switchTab('mediafire')" id="btn-mediafire" class="tab-btn tool-btn active w-full text-left px-3 py-2.5 rounded-2xl flex items-center gap-3">
                                 <span class="tool-icon"><i class="fa-solid fa-file-arrow-down text-xs"></i></span>
                                 <span class="flex-1 min-w-0">
@@ -590,6 +597,26 @@
         }
 
         const forms = {
+            aio: {
+                endpoint: '/download/aio',
+                html: `
+                    <div class="flex items-start gap-4 mb-6">
+                        <div class="w-11 h-11 rounded-2xl bg-indigo-500/10 border border-indigo-500/10 grid place-items-center flex-shrink-0"><i class="fa-solid fa-cloud-arrow-down text-indigo-400"></i></div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h3 class="text-lg font-extrabold text-white">AIO Downloader</h3>
+                                <code class="text-[9px] text-indigo-300 bg-indigo-500/10 px-2 py-1 rounded-lg">POST/GET</code>
+                            </div>
+                            <p class="text-[11px] text-slate-500 mt-1">Download media dari berbagai platform secara universal.</p>
+                        </div>
+                    </div>
+                    <div class="space-y-2">
+                        <label class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">URL Target</label>
+                        <input type="text" id="input-url" oninput="updateLiveUrl()" placeholder="https://..." class="custom-input">
+                    </div>
+                    <button onclick="executeApi('aio')" class="modern-btn primary-btn w-full mt-4 rounded-2xl py-3.5 text-xs font-extrabold text-white"><i class="fa-solid fa-play mr-2"></i>Jalankan Test API</button>
+                `
+            },
             mediafire: {
                 endpoint: '/download/mediafire',
                 html: `
@@ -728,7 +755,7 @@
         function getConstructedUrl() {
             const endpoint = forms[currentTool].endpoint;
             let queryStr = '';
-            if (currentTool === 'mediafire' || currentTool === 'tiktok' || currentTool === 'amfinder') {
+            if (currentTool === 'aio' || currentTool === 'mediafire' || currentTool === 'tiktok' || currentTool === 'amfinder') {
                 const val = document.getElementById('input-url')?.value.trim() || '';
                 if (val) queryStr = `?url=${encodeURIComponent(val)}`;
             } else if (currentTool === 'ffguest') {
